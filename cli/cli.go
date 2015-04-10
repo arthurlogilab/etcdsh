@@ -15,7 +15,7 @@ func Start() {
 	etcdPath := new(path.EtcdPath)
 	etcdClient := etcdclient.NewEtcdClient(*etcdUrl)
 
-	err, version := etcdClient.Version()
+	version, err := etcdClient.Version()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,7 +25,7 @@ func Start() {
 
 	commandsArray := [...]commands.Command{
 		commands.NewExitCommand(),
-		commands.NewCdCommand(etcdPath),
+		commands.NewCdCommand(etcdPath, etcdClient),
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)

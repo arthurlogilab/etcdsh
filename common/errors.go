@@ -1,4 +1,4 @@
-package commands
+package common
 
 func NewStringError(message string) error {
 	return &stringError{message}

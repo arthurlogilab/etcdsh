@@ -3,6 +3,7 @@ package etcdclient
 import "net/http"
 import "io/ioutil"
 import "encoding/json"
+import "github.com/kamilhark/etcd-console/common"
 
 func NewEtcdClient(etcdUrl string) *EtcdClient {
 	etcdClient := new(EtcdClient)
@@ -16,26 +17,46 @@ type EtcdClient struct {
 	httpClient http.Client
 }
 
-func (c *EtcdClient) Version() (error, string) {
+func (c *EtcdClient) Version() (string, error) {
 	resp, err := c.httpClient.Get(c.url + "/version")
 
 	if err != nil {
-		return err, ""
+		return "", nil
 	}
 
-	jsonDataFromHttp, err := ioutil.ReadAll(resp.Body)
+	jsonData, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		return err, ""
+		return "", err
 	}
 
 	version := Version{}
 
-	err = json.Unmarshal(jsonDataFromHttp, &version)
+	err = json.Unmarshal(jsonData, &version)
 
-	return nil, version.String()
+	return version.String(), nil
 }
 
-//func (c *EtcdClient) Get(string key) string {
+func (c *EtcdClient) Get(key string) (string, error) {
+	resp, err := c.httpClient.Get(c.url + "/v2/keys/" + key)
+	if err != nil {
+		return "", err
+	}
 
-//}
+	if resp.StatusCode != http.StatusOK {
+		return "", common.NewStringError("key not found")
+	}
+
+	jsonData, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return "", err
+	}
+
+	get := Get{}
+
+	err = json.Unmarshal(jsonData, &get)
+
+	return get.String(), nil
+
+}
