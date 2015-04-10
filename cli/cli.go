@@ -1,23 +1,62 @@
 package cli
 
-import (
-	"bufio"
-	"encoding/json"
-	"flag"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"strings"
-)
+import "bufio"
+import "encoding/json"
+import "flag"
+import "fmt"
+import "io/ioutil"
+import "net/http"
+import "os"
+import "strings"
+import "github.com/kamilhark/etcd-console/commands"
 
 func Start() {
-	var url = flag.String("url", "http://localhost:4001", "etcd url")
-	flag.Parse()
-
+	etcdUrl := getEtcdUrl()
 	httpClient := &http.Client{}
 
-	resp, err := httpClient.Get(*url + "/version")
+	fetchAndPrintVersion(httpClient, etcdUrl)
+	printPrompt()
+
+	commandsArray := [...]commands.Command{
+		new(commands.ExitCommand),
+	}
+
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		tokens := strings.Split(line, " ")
+		if len(tokens) == 0 {
+			continue
+		}
+
+		command := tokens[0]
+		args := tokens[:1]
+
+		for _, commandHandler := range commandsArray {
+			if commandHandler.Supports(command) {
+				commandHandler.Handle(args)
+				break
+
+			}
+		}
+		printPrompt()
+	}
+}
+
+func getEtcdUrl() *string {
+	var url = flag.String("url", "http://localhost:4001", "etcd url")
+	flag.Parse()
+	return url
+}
+
+func printPrompt() {
+	fmt.Print("/>")
+}
+
+func fetchAndPrintVersion(httpClient *http.Client, etcdUrl *string) {
+	resp, err := httpClient.Get(*etcdUrl + "/version")
 
 	if err != nil {
 		fmt.Println(err)
@@ -36,30 +75,6 @@ func Start() {
 	err = json.Unmarshal(jsonDataFromHttp, &version)
 	m := version.(map[string]interface{})
 
-	fmt.Print("Connected to " + (*url) + ", version ")
+	fmt.Print("Connected to " + (*etcdUrl) + ", version ")
 	fmt.Println(m["releaseVersion"])
-
-	printPrompt()
-
-	scanner := bufio.NewScanner(os.Stdin)
-
-	for scanner.Scan() {
-		textCommand := scanner.Text()
-		if strings.HasPrefix(textCommand, "cd") {
-			args := strings.Split(textCommand, " ")[:1]
-			if len(args) == 0 {
-
-			} else {
-
-			}
-
-		} else if strings.EqualFold(textCommand, "exit") {
-			os.Exit(0)
-		}
-		printPrompt()
-	}
-}
-
-func printPrompt() {
-	fmt.Print("/>")
 }
