@@ -22,10 +22,19 @@ func (cdCommand *CdCommand) Supports(command string) bool {
 }
 
 func (cdCommand *CdCommand) Handle(args []string) {
-	if len(args) == 0 {
+
+	switch {
+	case (len(args) == 0):
 		cdCommand.Path.Clear()
-	} else {
-		cdCommand.Path.Add(args[0])
+	case (args[0] == ".."):
+		cdCommand.Path.RemoveLast()
+	default:
+		{
+			pathElements := strings.Split(args[0], "/")
+			for _, element := range pathElements {
+				cdCommand.Path.Add(element)
+			}
+		}
 	}
 }
 
@@ -35,6 +44,10 @@ func (cdCommand *CdCommand) Verify(args []string) error {
 	}
 
 	if len(args) == 0 {
+		return nil
+	}
+
+	if args[0] == ".." {
 		return nil
 	}
 
