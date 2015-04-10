@@ -9,16 +9,19 @@ import "net/http"
 import "os"
 import "strings"
 import "github.com/kamilhark/etcd-console/commands"
+import "github.com/kamilhark/etcd-console/path"
 
 func Start() {
 	etcdUrl := getEtcdUrl()
 	httpClient := &http.Client{}
+	etcdPath := new(path.EtcdPath)
 
 	fetchAndPrintVersion(httpClient, etcdUrl)
-	printPrompt()
+	printPrompt(etcdPath)
 
 	commandsArray := [...]commands.Command{
-		new(commands.ExitCommand),
+		commands.NewExitCommand(),
+		commands.NewCdCommand(etcdPath),
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -32,7 +35,7 @@ func Start() {
 		}
 
 		command := tokens[0]
-		args := tokens[:1]
+		args := tokens[1:]
 
 		for _, commandHandler := range commandsArray {
 			if commandHandler.Supports(command) {
@@ -41,7 +44,7 @@ func Start() {
 
 			}
 		}
-		printPrompt()
+		printPrompt(etcdPath)
 	}
 }
 
@@ -51,8 +54,8 @@ func getEtcdUrl() *string {
 	return url
 }
 
-func printPrompt() {
-	fmt.Print("/>")
+func printPrompt(etcdPath *path.EtcdPath) {
+	fmt.Print(etcdPath.String() + ">")
 }
 
 func fetchAndPrintVersion(httpClient *http.Client, etcdUrl *string) {

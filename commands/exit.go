@@ -3,12 +3,11 @@ package commands
 import "os"
 import "strings"
 
-type Command interface {
-	Supports(string) bool
-	Handle([]string)
+type ExitCommand struct {
 }
 
-type ExitCommand struct {
+func NewExitCommand() *ExitCommand {
+	return new(ExitCommand)
 }
 
 func (exitCommand *ExitCommand) Supports(command string) bool {
