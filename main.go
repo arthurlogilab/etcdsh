@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/kamilhark/etcd-console/etcdconsolemain"
+	"github.com/kamilhark/etcd-console/cli"
 )
 
 func main() {
-	etcdconsolemain.Start()
+	cli.Start()
 }
