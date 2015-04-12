@@ -28,6 +28,8 @@ func (cdCommand *CdCommand) Handle(args []string) {
 		cdCommand.Path.Clear()
 	case (args[0] == ".."):
 		cdCommand.Path.RemoveLast()
+	case (args[0] == "."):
+		return
 	default:
 		{
 			pathElements := strings.Split(args[0], "/")
@@ -52,7 +54,14 @@ func (cdCommand *CdCommand) Verify(args []string) error {
 	}
 
 	nextPath := cdCommand.Path.String() + "/" + args[0]
-	_, err := cdCommand.etcdClient.Get(nextPath)
+	response, err := cdCommand.etcdClient.Get(nextPath)
+	if err != nil {
+		return err
+	}
 
-	return err
+	if !response.Node.Dir {
+		return common.NewStringError("not a directory")
+	}
+
+	return nil
 }

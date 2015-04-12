@@ -1,5 +1,7 @@
 package etcdclient
 
+import "fmt"
+
 type Node struct {
 	Key           string
 	Dir           bool
@@ -9,11 +11,11 @@ type Node struct {
 	CreatedIndex  int
 }
 
-type Get struct {
+type Response struct {
 	Action string
 	Node   Node
 }
 
-func (g *Get) String() string {
-	return g.Node.Value
+func (g *Response) String() string {
+	return fmt.Sprintf("%s %s", g.Node.Key, g.Node.Value)
 }

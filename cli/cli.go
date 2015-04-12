@@ -27,6 +27,7 @@ func Start() {
 		commands.NewExitCommand(),
 		commands.NewCdCommand(etcdPath, etcdClient),
 		commands.NewLsCommand(etcdPath, etcdClient),
+		commands.NewGetCommand(etcdPath, etcdClient),
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)

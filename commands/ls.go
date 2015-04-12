@@ -24,15 +24,15 @@ func (c *LsCommand) Supports(command string) bool {
 
 func (c *LsCommand) Handle(args []string) {
 	currentPath := c.path.String()
-	ls, err := c.etcdClient.Ls(currentPath)
+	resp, err := c.etcdClient.Get(currentPath)
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	for _, dir := range ls {
-		fmt.Println(dir)
+	for _, node := range resp.Node.Nodes {
+		fmt.Println(node.Key)
 	}
 }
 
