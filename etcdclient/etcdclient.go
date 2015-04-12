@@ -55,8 +55,43 @@ func (c *EtcdClient) Get(key string) (string, error) {
 
 	get := Get{}
 
-	err = json.Unmarshal(jsonData, &get)
+	_ = json.Unmarshal(jsonData, &get)
 
 	return get.String(), nil
+}
 
+func (c *EtcdClient) Ls(key string) ([]string, error) {
+	resp, err := c.httpClient.Get(c.url + "/v2/keys/" + key)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, common.NewStringError("key not found")
+	}
+
+	jsonData, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	get := Get{}
+
+	err = json.Unmarshal(jsonData, &get)
+
+	if err != nil {
+		return nil, err
+	}
+
+	nodes := get.Node.Nodes
+
+	result := make([]string, 0)
+
+	for _, node := range nodes {
+		result = append(result, node.Key)
+	}
+
+	return result, nil
 }

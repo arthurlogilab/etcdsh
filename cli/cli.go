@@ -26,7 +26,7 @@ func Start() {
 	commandsArray := [...]commands.Command{
 		commands.NewExitCommand(),
 		commands.NewCdCommand(etcdPath, etcdClient),
-		commands.NewLsCommand(),
+		commands.NewLsCommand(etcdPath, etcdClient),
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
