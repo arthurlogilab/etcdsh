@@ -55,7 +55,7 @@ func (c *EtcdClient) Get(key string) (*Response, error) {
 
 	etcdResponse := new(Response)
 
-	_ = json.Unmarshal(jsonData, etcdResponse)
+	err = json.Unmarshal(jsonData, etcdResponse)
 
-	return etcdResponse, nil
+	return etcdResponse, err
 }

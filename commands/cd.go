@@ -1,18 +1,18 @@
 package commands
 
 import "strings"
-import "github.com/kamilhark/etcd-console/path"
+import "github.com/kamilhark/etcd-console/pathresolver"
 import "github.com/kamilhark/etcd-console/etcdclient"
 import "github.com/kamilhark/etcd-console/common"
 
 type CdCommand struct {
-	Path       *path.EtcdPath
-	etcdClient *etcdclient.EtcdClient
+	PathResolver *pathresolver.PathResolver
+	etcdClient   *etcdclient.EtcdClient
 }
 
-func NewCdCommand(etcdPath *path.EtcdPath, etcdClient *etcdclient.EtcdClient) *CdCommand {
+func NewCdCommand(pathResolver *pathresolver.PathResolver, etcdClient *etcdclient.EtcdClient) *CdCommand {
 	cdCommand := new(CdCommand)
-	cdCommand.Path = etcdPath
+	cdCommand.PathResolver = pathResolver
 	cdCommand.etcdClient = etcdClient
 	return cdCommand
 }
@@ -25,16 +25,16 @@ func (cdCommand *CdCommand) Handle(args []string) {
 
 	switch {
 	case (len(args) == 0):
-		cdCommand.Path.Clear()
+		cdCommand.PathResolver.Clear()
 	case (args[0] == ".."):
-		cdCommand.Path.RemoveLast()
+		cdCommand.PathResolver.RemoveLast()
 	case (args[0] == "."):
 		return
 	default:
 		{
 			pathElements := strings.Split(args[0], "/")
 			for _, element := range pathElements {
-				cdCommand.Path.Add(element)
+				cdCommand.PathResolver.Add(element)
 			}
 		}
 	}
@@ -53,7 +53,7 @@ func (cdCommand *CdCommand) Verify(args []string) error {
 		return nil
 	}
 
-	nextPath := cdCommand.Path.String() + "/" + args[0]
+	nextPath := cdCommand.PathResolver.CurrentPath() + args[0]
 	response, err := cdCommand.etcdClient.Get(nextPath)
 	if err != nil {
 		return err

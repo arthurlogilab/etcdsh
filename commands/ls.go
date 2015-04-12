@@ -3,17 +3,17 @@ package commands
 import "strings"
 import "fmt"
 import "github.com/kamilhark/etcd-console/common"
-import "github.com/kamilhark/etcd-console/path"
+import "github.com/kamilhark/etcd-console/pathresolver"
 import "github.com/kamilhark/etcd-console/etcdclient"
 
 type LsCommand struct {
-	path       *path.EtcdPath
-	etcdClient *etcdclient.EtcdClient
+	pathResolver *pathresolver.PathResolver
+	etcdClient   *etcdclient.EtcdClient
 }
 
-func NewLsCommand(path *path.EtcdPath, etcdClient *etcdclient.EtcdClient) *LsCommand {
+func NewLsCommand(pathResolver *pathresolver.PathResolver, etcdClient *etcdclient.EtcdClient) *LsCommand {
 	lsCommand := new(LsCommand)
-	lsCommand.path = path
+	lsCommand.pathResolver = pathResolver
 	lsCommand.etcdClient = etcdClient
 	return lsCommand
 }
@@ -23,7 +23,7 @@ func (c *LsCommand) Supports(command string) bool {
 }
 
 func (c *LsCommand) Handle(args []string) {
-	currentPath := c.path.String()
+	currentPath := c.pathResolver.CurrentPath()
 	resp, err := c.etcdClient.Get(currentPath)
 
 	if err != nil {

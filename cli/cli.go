@@ -8,11 +8,11 @@ import "os"
 import "bufio"
 import "github.com/kamilhark/etcd-console/etcdclient"
 import "github.com/kamilhark/etcd-console/commands"
-import "github.com/kamilhark/etcd-console/path"
+import "github.com/kamilhark/etcd-console/pathresolver"
 
 func Start() {
 	etcdUrl := getEtcdUrl()
-	etcdPath := new(path.EtcdPath)
+	pathResolver := new(pathresolver.PathResolver)
 	etcdClient := etcdclient.NewEtcdClient(*etcdUrl)
 
 	version, err := etcdClient.Version()
@@ -21,13 +21,13 @@ func Start() {
 	}
 	fmt.Println("connected to etcd " + version)
 
-	printPrompt(etcdPath)
+	printPrompt(pathResolver)
 
 	commandsArray := [...]commands.Command{
 		commands.NewExitCommand(),
-		commands.NewCdCommand(etcdPath, etcdClient),
-		commands.NewLsCommand(etcdPath, etcdClient),
-		commands.NewGetCommand(etcdPath, etcdClient),
+		commands.NewCdCommand(pathResolver, etcdClient),
+		commands.NewLsCommand(pathResolver, etcdClient),
+		commands.NewGetCommand(pathResolver, etcdClient),
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -54,7 +54,7 @@ func Start() {
 				break
 			}
 		}
-		printPrompt(etcdPath)
+		printPrompt(pathResolver)
 	}
 }
 
@@ -64,6 +64,6 @@ func getEtcdUrl() *string {
 	return url
 }
 
-func printPrompt(etcdPath *path.EtcdPath) {
-	fmt.Print(etcdPath.String() + ">")
+func printPrompt(pathResolver *pathresolver.PathResolver) {
+	fmt.Print(pathResolver.CurrentPath() + ">")
 }
