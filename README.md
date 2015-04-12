@@ -4,6 +4,7 @@ etcd-console is a command line tool for [etcd](https://github.com/coreos/etcd).
 etcd-console provides filesystem-like access to etcd structure. 
 
 ## examples
+open etcd-console (by default connects to http://localhost:4001)
 <pre>
 <code>./etcd-console</code>
 </pre>
