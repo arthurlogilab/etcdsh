@@ -1,6 +1,5 @@
 package commands
 
-import "strings"
 import "github.com/kamilhark/etcd-console/pathresolver"
 import "github.com/kamilhark/etcd-console/etcdclient"
 import "github.com/kamilhark/etcd-console/common"
@@ -18,25 +17,14 @@ func NewCdCommand(pathResolver *pathresolver.PathResolver, etcdClient *etcdclien
 }
 
 func (cdCommand *CdCommand) Supports(command string) bool {
-	return strings.EqualFold(command, "cd")
+	return command == "cd"
 }
 
 func (cdCommand *CdCommand) Handle(args []string) {
-
-	switch {
-	case (len(args) == 0):
-		cdCommand.PathResolver.Clear()
-	case (args[0] == ".."):
-		cdCommand.PathResolver.RemoveLast()
-	case (args[0] == "."):
-		return
-	default:
-		{
-			pathElements := strings.Split(args[0], "/")
-			for _, element := range pathElements {
-				cdCommand.PathResolver.Add(element)
-			}
-		}
+	if len(args) == 1 {
+		cdCommand.PathResolver.GoTo(args[0])
+	} else {
+		cdCommand.PathResolver.GoTo("")
 	}
 }
 
@@ -49,11 +37,7 @@ func (cdCommand *CdCommand) Verify(args []string) error {
 		return nil
 	}
 
-	if args[0] == ".." {
-		return nil
-	}
-
-	nextPath := cdCommand.PathResolver.CurrentPath() + args[0]
+	nextPath := cdCommand.PathResolver.Resolve(args[0])
 	response, err := cdCommand.etcdClient.Get(nextPath)
 	if err != nil {
 		return err

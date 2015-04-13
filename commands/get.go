@@ -23,7 +23,7 @@ func (c *GetCommand) Supports(command string) bool {
 }
 
 func (c *GetCommand) Handle(args []string) {
-	key := c.PathResolver.CurrentPath() + args[0]
+	key := c.PathResolver.Resolve(args[0])
 	response, err := c.etcdClient.Get(key)
 	if err != nil {
 		fmt.Println(err)

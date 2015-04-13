@@ -1,6 +1,5 @@
 package commands
 
-import "strings"
 import "fmt"
 import "github.com/kamilhark/etcd-console/common"
 import "github.com/kamilhark/etcd-console/pathresolver"
@@ -19,7 +18,7 @@ func NewLsCommand(pathResolver *pathresolver.PathResolver, etcdClient *etcdclien
 }
 
 func (c *LsCommand) Supports(command string) bool {
-	return strings.EqualFold(command, "ls")
+	return command == "ls"
 }
 
 func (c *LsCommand) Handle(args []string) {
