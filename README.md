@@ -22,9 +22,23 @@ go one directory up
 <code>foo/bar>cd ..</code>
 <code>foo>...</code>
 </pre>
+set value
+<pre>
+<code>foo/bar>set key value</code>
+</pre>
+get value
+<pre>
+<code>foo/bar>get key</code>
+<code>foo/bar>get /foo/bar/key</code>
+<code>foo/bar>get /foo/bar/../bar/key</code>
+</pre>
+rm key or dir
+<pre>
+<code>foo/bar>rm key</code>
+<code>foo/bar>rm key/abc/def</code>
+</pre>
 exit etcd-console
 <pre>
 <code>foo/bar>exit</code>
 </pre>
 
-more commands will be added soon
