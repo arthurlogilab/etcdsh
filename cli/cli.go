@@ -28,6 +28,8 @@ func Start() {
 		commands.NewCdCommand(pathResolver, etcdClient),
 		commands.NewLsCommand(pathResolver, etcdClient),
 		commands.NewGetCommand(pathResolver, etcdClient),
+		commands.NewSetCommand(pathResolver, etcdClient),
+		commands.NewRmCommand(pathResolver, etcdClient),
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -42,9 +44,10 @@ func Start() {
 
 		command := tokens[0]
 		args := tokens[1:]
-
+		found := false
 		for _, commandHandler := range commandsArray {
 			if commandHandler.Supports(command) {
+				found = true
 				err := commandHandler.Verify(args)
 				if err != nil {
 					fmt.Println(err)
@@ -53,6 +56,9 @@ func Start() {
 				}
 				break
 			}
+		}
+		if !found {
+			fmt.Println("invalid command")
 		}
 		printPrompt(pathResolver)
 	}
