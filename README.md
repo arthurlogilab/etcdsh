@@ -4,6 +4,9 @@ etcd-console is a command line tool for [etcd](https://github.com/coreos/etcd).
 etcd-console provides filesystem-like access to etcd structure. 
 Although there is official command line tool [etcdctl](https://github.com/coreos/etcd/tree/master/etcdctl), it is enoying you have to enter the same (ofter very long) keys again for every command. etcd-console tries to make it simpler and faster.
 
+## Building
+etcd-console is written using go language, it can be build using standard go build tool. 
+
 ## Downloads
  * [mac](https://github.com/kamilhark/etcd-console/releases/download/0.0.1-ALPHA/etcd-console) 
 
