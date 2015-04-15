@@ -8,8 +8,8 @@ Although there is official command line tool [etcdctl](https://github.com/coreos
 etcd-console is written using go language, it can be build using standard go build tool. 
 
 ## Downloads binaries
- * [mac](https://github.com/kamilhark/etcd-console/releases/download/0.0.1-ALPHA/etcd-console) 
- * linux (soon)
+ * [mac](https://github.com/kamilhark/etcd-console/releases/download/0.0.1-ALPHA/etcd-console-mac.zip) 
+ * [linux](https://github.com/kamilhark/etcd-console/releases/download/0.0.1-ALPHA/etcd-console-linux.zip)
  * windows (soon)
 
 ## examples
