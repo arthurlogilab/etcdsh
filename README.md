@@ -7,8 +7,10 @@ Although there is official command line tool [etcdctl](https://github.com/coreos
 ## Building
 etcd-console is written using go language, it can be build using standard go build tool. 
 
-## Downloads
+## Downloads binaries
  * [mac](https://github.com/kamilhark/etcd-console/releases/download/0.0.1-ALPHA/etcd-console) 
+ * linux (soon)
+ * windows (soon)
 
 ## examples
 open etcd-console (by default it connects to http://localhost:4001)
