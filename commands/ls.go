@@ -22,8 +22,12 @@ func (c *LsCommand) Supports(command string) bool {
 }
 
 func (c *LsCommand) Handle(args []string) {
-	currentPath := c.pathResolver.CurrentPath()
-	resp, err := c.etcdClient.Get(currentPath)
+	var lsArg = ""
+	if len(args) == 1 {
+		lsArg = args[0]
+	}
+	lsPath := c.pathResolver.Resolve(lsArg)
+	resp, err := c.etcdClient.Get(lsPath)
 
 	if err != nil {
 		fmt.Println(err)
@@ -36,7 +40,7 @@ func (c *LsCommand) Handle(args []string) {
 }
 
 func (c *LsCommand) Verify(args []string) error {
-	if len(args) > 1 {
+	if len(args) > 2 {
 		return common.NewStringError("to many arguments")
 	}
 	return nil
