@@ -1,4 +1,4 @@
-# etcdsh
+# etcdsh [![Build Status](https://travis-ci.org/kamilhark/etcdsh.svg?branch=master)](https://travis-ci.org/kamilhark/etcdsh.svg?branch=master)
 
 etcdsh is a command line tool for [etcd](https://github.com/coreos/etcd).
 etcdsh provides filesystem-like access to etcd structure. 
