@@ -1,24 +1,24 @@
-# etcd-console
+# etcdsh
 
-etcd-console is a command line tool for [etcd](https://github.com/coreos/etcd).
-etcd-console provides filesystem-like access to etcd structure. 
-Although there is official command line tool [etcdctl](https://github.com/coreos/etcd/tree/master/etcdctl), it is enoying you have to enter the same (ofter very long) keys again for every command. etcd-console tries to make it simpler and faster.
+etcdsh is a command line tool for [etcd](https://github.com/coreos/etcd).
+etcdsh provides filesystem-like access to etcd structure. 
+Although there is official command line tool [etcdctl](https://github.com/coreos/etcd/tree/master/etcdctl), it is enoying you have to enter the same (ofter very long) keys again for every command. etcdsh tries to make it simpler and faster.
 
 ## Building
-etcd-console is written using go language, it can be build using standard go build tool. 
+etcdshis written using go language, it can be build using standard go build tool. 
 
 ## Downloads binaries
- * [mac](https://github.com/kamilhark/etcd-console/releases/download/0.0.1-ALPHA/etcd-console-mac.zip) 
- * [linux](https://github.com/kamilhark/etcd-console/releases/download/0.0.1-ALPHA/etcd-console-linux.zip)
+ * [mac](https://github.com/kamilhark/etcdsh/releases/download/0.0.1-ALPHA/etcdsh-mac.zip) 
+ * [linux](https://github.com/kamilhark/etcdsh/releases/download/0.0.1-ALPHA/etcdsh-linux.zip)
  * windows (soon)
 
 ## examples
-open etcd-console (by default it connects to http://localhost:4001)
+open etcdsh(by default it connects to http://localhost:4001)
 <pre>
-<code>./etcd-console</code>
+<code>./etcdsh</code>
 </pre>
 <pre>
-<code>./etcd-console --url http://localhost:4001</code>
+<code>./etcdsh --url http://localhost:4001</code>
 </pre>
 change dir to foo/bar and list content of it
 <pre>
@@ -46,7 +46,7 @@ rm key or dir
 <code>foo/bar>rm key</code>
 <code>foo/bar>rm key/abc/def</code>
 </pre>
-exit etcd-console
+exit etcdsh
 <pre>
 <code>foo/bar>exit</code>
 </pre>

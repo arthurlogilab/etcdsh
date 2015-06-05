@@ -6,9 +6,9 @@ import "strings"
 import "log"
 import "os"
 import "bufio"
-import "github.com/kamilhark/etcd-console/etcdclient"
-import "github.com/kamilhark/etcd-console/commands"
-import "github.com/kamilhark/etcd-console/pathresolver"
+import "github.com/kamilhark/etcdsh/etcdclient"
+import "github.com/kamilhark/etcdsh/commands"
+import "github.com/kamilhark/etcdsh/pathresolver"
 
 func Start() {
 	etcdUrl := getEtcdUrl()

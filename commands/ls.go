@@ -1,9 +1,9 @@
 package commands
 
 import "fmt"
-import "github.com/kamilhark/etcd-console/common"
-import "github.com/kamilhark/etcd-console/pathresolver"
-import "github.com/kamilhark/etcd-console/etcdclient"
+import "github.com/kamilhark/etcdsh/common"
+import "github.com/kamilhark/etcdsh/pathresolver"
+import "github.com/kamilhark/etcdsh/etcdclient"
 
 type LsCommand struct {
 	pathResolver *pathresolver.PathResolver

@@ -2,9 +2,9 @@ package commands
 
 import "strings"
 import "fmt"
-import "github.com/kamilhark/etcd-console/pathresolver"
-import "github.com/kamilhark/etcd-console/etcdclient"
-import "github.com/kamilhark/etcd-console/common"
+import "github.com/kamilhark/etcdsh/pathresolver"
+import "github.com/kamilhark/etcdsh/etcdclient"
+import "github.com/kamilhark/etcdsh/common"
 
 type SetCommand struct {
 	PathResolver *pathresolver.PathResolver

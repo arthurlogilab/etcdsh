@@ -5,7 +5,7 @@ import "bytes"
 import "net/url"
 import "io/ioutil"
 import "encoding/json"
-import "github.com/kamilhark/etcd-console/common"
+import "github.com/kamilhark/etcdsh/common"
 
 func NewEtcdClient(etcdUrl string) *EtcdClient {
 	etcdClient := new(EtcdClient)

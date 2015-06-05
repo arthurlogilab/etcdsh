@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/kamilhark/etcd-console/cli"
+	"github.com/kamilhark/etcdsh/cli"
 )
 
 func main() {
