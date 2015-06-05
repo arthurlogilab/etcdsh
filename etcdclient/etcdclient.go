@@ -22,7 +22,7 @@ type EtcdClient struct {
 func (c *EtcdClient) Version() (string, error) {
 	resp, err := c.httpClient.Get(c.url + "/version")
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	jsonData, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

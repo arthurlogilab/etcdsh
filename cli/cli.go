@@ -18,6 +18,7 @@ func Start() {
 	version, err := etcdClient.Version()
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
 	fmt.Println("connected to etcd " + version)
 
