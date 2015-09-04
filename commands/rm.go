@@ -23,16 +23,18 @@ func (c *RmCommand) Supports(command string) bool {
 }
 
 func (c *RmCommand) Handle(args []string) {
-	key := c.PathResolver.Resolve(args[0])
-	err := c.etcdClient.Delete(key)
-	if err != nil {
-		fmt.Println(err)
+	for i := 0; i < len(args); i++ {
+		key := c.PathResolver.Resolve(args[i])
+		err := c.etcdClient.Delete(key)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 }
 
 func (c *RmCommand) Verify(args []string) error {
-	if len(args) != 1 {
-		return common.NewStringError("wrong number of arguments, rn command requires one argument")
+	if len(args) < 1 {
+		return common.NewStringError("wrong number of arguments, rm command requires at least one argument")
 	}
 	return nil
 }
