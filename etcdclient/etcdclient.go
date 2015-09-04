@@ -5,7 +5,9 @@ import "bytes"
 import "net/url"
 import "io/ioutil"
 import "encoding/json"
-import "github.com/kamilhark/etcdsh/common"
+import (
+	"github.com/kamilhark/etcdsh/common"
+)
 
 func NewEtcdClient(etcdUrl string) *EtcdClient {
 	etcdClient := new(EtcdClient)
@@ -56,6 +58,7 @@ func (c *EtcdClient) Set(key, value string) error {
 	url := c.url + "/v2/keys" + key
 	data := bytes.NewBufferString(values.Encode())
 	request, err := http.NewRequest("PUT", url, data)
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := c.httpClient.Do(request)
 	if err != nil {
 		return err
