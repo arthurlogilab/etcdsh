@@ -8,10 +8,7 @@ import "github.com/kamilhark/etcdsh/etcdclient"
 import "github.com/kamilhark/etcdsh/commands"
 import "github.com/kamilhark/etcdsh/pathresolver"
 import "github.com/peterh/liner"
-import "github.com/aybabtme/rgbterm"
 
-
-var r, g, b uint8 = 17, 47, 193
 
 func Start() {
 	etcdUrl := getEtcdUrl()
@@ -24,7 +21,7 @@ func Start() {
 		return
 	}
 
-	fmt.Println(rgbterm.FgString("connected to etcd " + version, r, g, b))
+	fmt.Println("connected to etcd " + version)
 
 	console := liner.NewLiner()
 	console.SetTabCompletionStyle(liner.TabPrints)
@@ -50,7 +47,7 @@ func Start() {
 	});
 
 	for ;; {
-		line, err := console.Prompt(rgbterm.FgString("etcdsh:" + pathResolver.CurrentPath() + ">", r, g, b))
+		line, err := console.Prompt(pathResolver.CurrentPath() + ">")
 
 		if err != nil && err == liner.ErrPromptAborted {
 			return
