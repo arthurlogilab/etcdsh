@@ -38,3 +38,7 @@ func (c *RmCommand) Verify(args []string) error {
 	}
 	return nil
 }
+
+func (c *RmCommand) CommandString() string {
+	return "rm"
+}

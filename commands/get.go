@@ -42,3 +42,8 @@ func (c *GetCommand) Verify(args []string) error {
 	}
 	return nil
 }
+
+func (c *GetCommand) CommandString() string {
+	return "get"
+}
+

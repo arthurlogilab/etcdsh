@@ -37,3 +37,8 @@ func (c *SetCommand) Verify(args []string) error {
 	}
 	return nil
 }
+
+func (c *SetCommand) CommandString() string {
+	return "set"
+}
+

@@ -45,3 +45,8 @@ func (c *LsCommand) Verify(args []string) error {
 	}
 	return nil
 }
+
+func (c *LsCommand) CommandString() string {
+	return "ls"
+}
+

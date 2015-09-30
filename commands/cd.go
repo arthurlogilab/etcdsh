@@ -49,3 +49,7 @@ func (cdCommand *CdCommand) Verify(args []string) error {
 
 	return nil
 }
+
+func (cdCommand *CdCommand) CommandString() string {
+	return "cd"
+}

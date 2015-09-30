@@ -4,11 +4,10 @@ import "flag"
 import "fmt"
 import "strings"
 import "log"
-import "os"
-import "bufio"
 import "github.com/kamilhark/etcdsh/etcdclient"
 import "github.com/kamilhark/etcdsh/commands"
 import "github.com/kamilhark/etcdsh/pathresolver"
+import "github.com/peterh/liner"
 
 func Start() {
 	etcdUrl := getEtcdUrl()
@@ -20,12 +19,13 @@ func Start() {
 		log.Fatal(err)
 		return
 	}
+
 	fmt.Println("connected to etcd " + version)
 
-	printPrompt(pathResolver)
-
+	console := liner.NewLiner()
+	console.SetTabCompletionStyle(liner.TabPrints)
 	commandsArray := [...]commands.Command{
-		commands.NewExitCommand(),
+		commands.NewExitCommand(console),
 		commands.NewCdCommand(pathResolver, etcdClient),
 		commands.NewLsCommand(pathResolver, etcdClient),
 		commands.NewGetCommand(pathResolver, etcdClient),
@@ -33,15 +33,31 @@ func Start() {
 		commands.NewRmCommand(pathResolver, etcdClient),
 	}
 
-	scanner := bufio.NewScanner(os.Stdin)
+	defer console.Close()
+	console.SetCtrlCAborts(true)
+	console.SetCompleter(func(line string) (c []string) {
+		for _, commandHandler := range commandsArray {
+			if (strings.HasPrefix(commandHandler.CommandString(), line)) {
+				c = append(c, commandHandler.CommandString() + " ")
+			}
+		}
 
-	for scanner.Scan() {
-		line := scanner.Text()
+		return
+	});
+
+	for ;; {
+		line, err := console.Prompt(pathResolver.CurrentPath() + ">")
+
+		if err != nil && err == liner.ErrPromptAborted {
+			return
+		}
 
 		tokens := strings.Split(line, " ")
 		if len(tokens) == 0 {
 			continue
 		}
+
+		console.AppendHistory(line)
 
 		command := tokens[0]
 		args := tokens[1:]
@@ -72,5 +88,5 @@ func getEtcdUrl() *string {
 }
 
 func printPrompt(pathResolver *pathresolver.PathResolver) {
-	fmt.Print(pathResolver.CurrentPath() + ">")
+	fmt.Print()
 }
