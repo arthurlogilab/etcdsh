@@ -6,6 +6,7 @@ Although there is an official command line tool [etcdctl](https://github.com/cor
 
 ## Building
 `etcdsh` is written using go language, it can be built using standard go build tool:
+
 `go get github.com/kamilhark/etcdsh`
 
 ## Downloads binaries
