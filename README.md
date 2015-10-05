@@ -5,7 +5,8 @@ etcdsh provides filesystem-like access to etcd structure.
 Although there is an official command line tool [etcdctl](https://github.com/coreos/etcd/tree/master/etcdctl), it is annoying you have to enter the same (often very long) keys again for every command. etcdsh tries to make it simpler and faster by providing history and tab completion.
 
 ## Building
-`etcdsh` is written using go language, it can be build using standard go build tool. 
+`etcdsh` is written using go language, it can be built using standard go build tool:
+`go get github.com/kamilhark/etcdsh`
 
 ## Downloads binaries
  * [mac](https://github.com/kamilhark/etcdsh/releases/download/0.0.1-ALPHA/etcdsh-mac.zip) 
