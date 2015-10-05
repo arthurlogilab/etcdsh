@@ -9,8 +9,7 @@ etcdsh is written using go language, it can be build using standard go build too
 
 ## Downloads binaries
  * [mac](https://github.com/kamilhark/etcdsh/releases/download/0.0.1-ALPHA/etcdsh-mac.zip) 
- * linux (soon)§
- * windows (soon)
+ * [linux](https://github.com/kamilhark/etcdsh/releases/download/0.0.2-ALPHA/etcdsh_mac.tar.gz)
 
 ## examples
 open etcdsh(by default it connects to http://localhost:4001)
