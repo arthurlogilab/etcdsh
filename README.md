@@ -2,7 +2,7 @@
 
 `etcdsh` is a command line tool for [etcd](https://github.com/coreos/etcd).
 etcdsh provides filesystem-like access to etcd structure. 
-Although there is an official command line tool [etcdctl](https://github.com/coreos/etcd/tree/master/etcdctl), it is annoying you have to enter the same (often very long) keys again for every command. etcdsh tries to make it simpler and faster.
+Although there is an official command line tool [etcdctl](https://github.com/coreos/etcd/tree/master/etcdctl), it is annoying you have to enter the same (often very long) keys again for every command. etcdsh tries to make it simpler and faster by providing history and tab completion.
 
 ## Building
 `etcdsh` is written using go language, it can be build using standard go build tool. 
