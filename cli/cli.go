@@ -37,47 +37,7 @@ func Start() {
 	defer console.Close()
 	console.SetCtrlCAborts(true)
 	//todo extract to seperate module and unit test it!
-	console.SetCompleter(func(line string) (c []string) {
-
-		tokens := strings.Split(line, " ")
-
-		if len(tokens) == 1 { //user entered only a command (or part of a command) name without arguments
-			for _, commandHandler := range commandsArray {
-				if strings.HasPrefix(commandHandler.CommandString(), line) {
-					c = append(c, commandHandler.CommandString())
-				}
-			}
-
-		} else if len(tokens) == 2 { //user entered full command name and part of argument
-
-
-			res, _ := etcdClient.Get(pathResolver.CurrentPath())
-			nodes := res.Node.Nodes
-
-			for _, commandHandler := range commandsArray {
-
-				if strings.Trim(line, " ") == commandHandler.CommandString() || strings.HasPrefix(line, commandHandler.CommandString()) {
-
-					for _, node := range nodes {
-
-						if !node.Dir {
-							continue
-						}
-
-						key := strings.TrimPrefix(strings.TrimPrefix(node.Key, pathResolver.CurrentPath()), "/")
-
-						if strings.HasPrefix(key, tokens[1]) {
-							c = append(c, commandHandler.CommandString() + " " + key)
-						}
-					}
-
-				}
-			}
-
-		}
-
-		return
-	});
+	console.SetCompleter(GetCompleter(etcdClient, commandsArray, pathResolver))
 
 	for {
 		line, err := console.Prompt(pathResolver.CurrentPath() + ">")
