@@ -9,13 +9,6 @@ import (
 	"github.com/kamilhark/etcdsh/common"
 )
 
-func NewEtcdClient(etcdUrl string) EtcdClient {
-	etcdClient := new(EtcdClientImpl)
-	etcdClient.httpClient = http.Client{}
-	etcdClient.url = etcdUrl
-	return etcdClient
-}
-
 type EtcdClient interface {
 	Version() (string, error)
 	Get(key string) (*Response, error)
@@ -24,12 +17,12 @@ type EtcdClient interface {
 }
 
 type EtcdClientImpl struct {
-	url        string
-	httpClient http.Client
+	Url string
+	HttpClient http.Client
 }
 
 func (c *EtcdClientImpl) Version() (string, error) {
-	resp, err := c.httpClient.Get(c.url + "/version")
+	resp, err := c.HttpClient.Get(c.Url + "/version")
 	if err != nil {
 		return "", err
 	}
@@ -43,7 +36,7 @@ func (c *EtcdClientImpl) Version() (string, error) {
 }
 
 func (c *EtcdClientImpl) Get(key string) (*Response, error) {
-	resp, err := c.httpClient.Get(c.url + "/v2/keys/" + key)
+	resp, err := c.HttpClient.Get(c.Url + "/v2/keys/" + key)
 	if err != nil {
 		return nil, err
 	}
@@ -62,11 +55,11 @@ func (c *EtcdClientImpl) Get(key string) (*Response, error) {
 func (c *EtcdClientImpl) Set(key, value string) error {
 	values := url.Values{}
 	values.Set("value", value)
-	url := c.url + "/v2/keys" + key
+	url := c.Url + "/v2/keys" + key
 	data := bytes.NewBufferString(values.Encode())
 	request, err := http.NewRequest("PUT", url, data)
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	resp, err := c.httpClient.Do(request)
+	resp, err := c.HttpClient.Do(request)
 	if err != nil {
 		return err
 	}
@@ -77,9 +70,9 @@ func (c *EtcdClientImpl) Set(key, value string) error {
 }
 
 func (c *EtcdClientImpl) Delete(key string) error {
-	url := c.url + "/v2/keys" + key + "?recursive=true"
+	url := c.Url + "/v2/keys" + key + "?recursive=true"
 	request, err := http.NewRequest("DELETE", url, nil)
-	resp, err := c.httpClient.Do(request)
+	resp, err := c.HttpClient.Do(request)
 	if err != nil {
 		return err
 	}

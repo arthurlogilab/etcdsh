@@ -10,12 +10,6 @@ type ExitCommand struct {
 	State *liner.State
 }
 
-func NewExitCommand(state *liner.State) *ExitCommand {
-	exitCommand := new(ExitCommand)
-	exitCommand.State = state;
-	return exitCommand
-}
-
 func (exitCommand *ExitCommand) Supports(command string) bool {
 	return strings.EqualFold(command, "exit")
 }

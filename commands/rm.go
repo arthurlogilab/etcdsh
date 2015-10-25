@@ -8,14 +8,7 @@ import "github.com/kamilhark/etcdsh/common"
 
 type RmCommand struct {
 	PathResolver *pathresolver.PathResolver
-	etcdClient   etcdclient.EtcdClient
-}
-
-func NewRmCommand(pathResolver *pathresolver.PathResolver, etcdClient etcdclient.EtcdClient) *RmCommand {
-	command := new(RmCommand)
-	command.PathResolver = pathResolver
-	command.etcdClient = etcdClient
-	return command
+	EtcdClient   etcdclient.EtcdClient
 }
 
 func (c *RmCommand) Supports(command string) bool {
@@ -25,7 +18,7 @@ func (c *RmCommand) Supports(command string) bool {
 func (c *RmCommand) Handle(args []string) {
 	for i := 0; i < len(args); i++ {
 		key := c.PathResolver.Resolve(args[i])
-		err := c.etcdClient.Delete(key)
+		err := c.EtcdClient.Delete(key)
 		if err != nil {
 			fmt.Println(err)
 		}

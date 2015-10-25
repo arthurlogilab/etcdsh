@@ -6,15 +6,8 @@ import "github.com/kamilhark/etcdsh/pathresolver"
 import "github.com/kamilhark/etcdsh/etcdclient"
 
 type LsCommand struct {
-	pathResolver *pathresolver.PathResolver
-	etcdClient   etcdclient.EtcdClient
-}
-
-func NewLsCommand(pathResolver *pathresolver.PathResolver, etcdClient etcdclient.EtcdClient) *LsCommand {
-	lsCommand := new(LsCommand)
-	lsCommand.pathResolver = pathResolver
-	lsCommand.etcdClient = etcdClient
-	return lsCommand
+	PathResolver *pathresolver.PathResolver
+	EtcdClient   etcdclient.EtcdClient
 }
 
 func (c *LsCommand) Supports(command string) bool {
@@ -26,8 +19,8 @@ func (c *LsCommand) Handle(args []string) {
 	if len(args) == 1 {
 		lsArg = args[0]
 	}
-	lsPath := c.pathResolver.Resolve(lsArg)
-	resp, err := c.etcdClient.Get(lsPath)
+	lsPath := c.PathResolver.Resolve(lsArg)
+	resp, err := c.EtcdClient.Get(lsPath)
 
 	if err != nil {
 		fmt.Println(err)

@@ -10,11 +10,11 @@ import (
 var etcdClient = &etcdclient.EtcdClientMock{}
 var pathResolver = &pathresolver.PathResolver{}
 var commandsArray = []commands.Command{
-	commands.NewCdCommand(pathResolver, etcdClient),
-	commands.NewLsCommand(pathResolver, etcdClient),
-	commands.NewGetCommand(pathResolver, etcdClient),
-	commands.NewSetCommand(pathResolver, etcdClient),
-	commands.NewRmCommand(pathResolver, etcdClient),
+	&commands.CdCommand{pathResolver, etcdClient},
+	&commands.LsCommand{pathResolver, etcdClient},
+	&commands.GetCommand{pathResolver, etcdClient},
+	&commands.SetCommand{pathResolver, etcdClient},
+	&commands.RmCommand{pathResolver, etcdClient},
 }
 var completer = (&Completer{etcdClient, commandsArray, pathResolver}).Get
 

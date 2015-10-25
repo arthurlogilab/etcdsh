@@ -8,14 +8,7 @@ import "github.com/kamilhark/etcdsh/common"
 
 type GetCommand struct {
 	PathResolver *pathresolver.PathResolver
-	etcdClient   etcdclient.EtcdClient
-}
-
-func NewGetCommand(pathResolver *pathresolver.PathResolver, etcdClient etcdclient.EtcdClient) *GetCommand {
-	cdCommand := new(GetCommand)
-	cdCommand.PathResolver = pathResolver
-	cdCommand.etcdClient = etcdClient
-	return cdCommand
+	EtcdClient   etcdclient.EtcdClient
 }
 
 func (c *GetCommand) Supports(command string) bool {
@@ -24,7 +17,7 @@ func (c *GetCommand) Supports(command string) bool {
 
 func (c *GetCommand) Handle(args []string) {
 	key := c.PathResolver.Resolve(args[0])
-	response, err := c.etcdClient.Get(key)
+	response, err := c.EtcdClient.Get(key)
 	if err != nil {
 		fmt.Println(err)
 	} else {

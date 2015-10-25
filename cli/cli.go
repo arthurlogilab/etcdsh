@@ -7,13 +7,16 @@ import "log"
 import "github.com/kamilhark/etcdsh/etcdclient"
 import "github.com/kamilhark/etcdsh/commands"
 import "github.com/kamilhark/etcdsh/pathresolver"
-import "github.com/peterh/liner"
+import (
+	"github.com/peterh/liner"
+	"net/http"
+)
 
 
 func Start() {
 	etcdUrl := getEtcdUrl()
 	pathResolver := new(pathresolver.PathResolver)
-	etcdClient := etcdclient.NewEtcdClient(*etcdUrl)
+	etcdClient := &etcdclient.EtcdClientImpl{etcdUrl, http.Client{}}
 
 	version, err := etcdClient.Version()
 	if err != nil {
@@ -26,12 +29,12 @@ func Start() {
 	console := liner.NewLiner()
 	console.SetTabCompletionStyle(liner.TabCircular)
 	commandsArray := []commands.Command{
-		commands.NewExitCommand(console),
-		commands.NewCdCommand(pathResolver, etcdClient),
-		commands.NewLsCommand(pathResolver, etcdClient),
-		commands.NewGetCommand(pathResolver, etcdClient),
-		commands.NewSetCommand(pathResolver, etcdClient),
-		commands.NewRmCommand(pathResolver, etcdClient),
+		&commands.ExitCommand{console},
+		&commands.CdCommand{pathResolver, etcdClient},
+		&commands.LsCommand{pathResolver, etcdClient},
+		&commands.GetCommand{pathResolver, etcdClient},
+		&commands.SetCommand{pathResolver, etcdClient},
+		&commands.RmCommand{pathResolver, etcdClient},
 	}
 
 	defer console.Close()
@@ -79,10 +82,10 @@ func Start() {
 	}
 }
 
-func getEtcdUrl() *string {
+func getEtcdUrl() string {
 	var url = flag.String("url", "http://localhost:4001", "etcd url")
 	flag.Parse()
-	return url
+	return *url
 }
 
 func printPrompt(pathResolver *pathresolver.PathResolver) {
