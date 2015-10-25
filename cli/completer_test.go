@@ -18,7 +18,7 @@ var commandsArray = []commands.Command{
 }
 var completer = (&Completer{etcdClient, commandsArray, pathResolver}).Get
 
-func TestAddToPathSingleDirectory(t *testing.T) {
+func TestCompleteCommandsNames(t *testing.T) {
 	assertContainHint(t, completer("c"), "cd")
 	assertContainHint(t, completer("s"), "set")
 	assertContainHint(t, completer("r"), "rm")
