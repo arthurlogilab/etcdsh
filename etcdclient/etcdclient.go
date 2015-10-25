@@ -9,19 +9,26 @@ import (
 	"github.com/kamilhark/etcdsh/common"
 )
 
-func NewEtcdClient(etcdUrl string) *EtcdClient {
-	etcdClient := new(EtcdClient)
+func NewEtcdClient(etcdUrl string) EtcdClient {
+	etcdClient := new(EtcdClientImpl)
 	etcdClient.httpClient = http.Client{}
 	etcdClient.url = etcdUrl
 	return etcdClient
 }
 
-type EtcdClient struct {
+type EtcdClient interface {
+	Version() (string, error)
+	Get(key string) (*Response, error)
+	Set(key, value string) error
+	Delete(key string) error
+}
+
+type EtcdClientImpl struct {
 	url        string
 	httpClient http.Client
 }
 
-func (c *EtcdClient) Version() (string, error) {
+func (c *EtcdClientImpl) Version() (string, error) {
 	resp, err := c.httpClient.Get(c.url + "/version")
 	if err != nil {
 		return "", err
@@ -35,7 +42,7 @@ func (c *EtcdClient) Version() (string, error) {
 	return version.String(), nil
 }
 
-func (c *EtcdClient) Get(key string) (*Response, error) {
+func (c *EtcdClientImpl) Get(key string) (*Response, error) {
 	resp, err := c.httpClient.Get(c.url + "/v2/keys/" + key)
 	if err != nil {
 		return nil, err
@@ -52,7 +59,7 @@ func (c *EtcdClient) Get(key string) (*Response, error) {
 	return etcdResponse, err
 }
 
-func (c *EtcdClient) Set(key, value string) error {
+func (c *EtcdClientImpl) Set(key, value string) error {
 	values := url.Values{}
 	values.Set("value", value)
 	url := c.url + "/v2/keys" + key
@@ -69,7 +76,7 @@ func (c *EtcdClient) Set(key, value string) error {
 	return nil
 }
 
-func (c *EtcdClient) Delete(key string) error {
+func (c *EtcdClientImpl) Delete(key string) error {
 	url := c.url + "/v2/keys" + key + "?recursive=true"
 	request, err := http.NewRequest("DELETE", url, nil)
 	resp, err := c.httpClient.Do(request)

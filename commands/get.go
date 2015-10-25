@@ -8,10 +8,10 @@ import "github.com/kamilhark/etcdsh/common"
 
 type GetCommand struct {
 	PathResolver *pathresolver.PathResolver
-	etcdClient   *etcdclient.EtcdClient
+	etcdClient   etcdclient.EtcdClient
 }
 
-func NewGetCommand(pathResolver *pathresolver.PathResolver, etcdClient *etcdclient.EtcdClient) *GetCommand {
+func NewGetCommand(pathResolver *pathresolver.PathResolver, etcdClient etcdclient.EtcdClient) *GetCommand {
 	cdCommand := new(GetCommand)
 	cdCommand.PathResolver = pathResolver
 	cdCommand.etcdClient = etcdClient

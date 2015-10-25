@@ -8,7 +8,7 @@ import (
 )
 
 type Completer struct {
-	EtcdClient *etcdclient.EtcdClient
+	EtcdClient etcdclient.EtcdClient
 	CommandsArray []commands.Command
 	PathResolver *pathresolver.PathResolver
 }

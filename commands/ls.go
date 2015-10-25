@@ -7,10 +7,10 @@ import "github.com/kamilhark/etcdsh/etcdclient"
 
 type LsCommand struct {
 	pathResolver *pathresolver.PathResolver
-	etcdClient   *etcdclient.EtcdClient
+	etcdClient   etcdclient.EtcdClient
 }
 
-func NewLsCommand(pathResolver *pathresolver.PathResolver, etcdClient *etcdclient.EtcdClient) *LsCommand {
+func NewLsCommand(pathResolver *pathresolver.PathResolver, etcdClient etcdclient.EtcdClient) *LsCommand {
 	lsCommand := new(LsCommand)
 	lsCommand.pathResolver = pathResolver
 	lsCommand.etcdClient = etcdClient
