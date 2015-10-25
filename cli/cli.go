@@ -37,7 +37,9 @@ func Start() {
 	defer console.Close()
 	console.SetCtrlCAborts(true)
 	//todo extract to seperate module and unit test it!
-	console.SetCompleter(GetCompleter(etcdClient, commandsArray, pathResolver))
+
+	completer := (&Completer{etcdClient, commandsArray, pathResolver}).Get
+	console.SetCompleter(completer)
 
 	for {
 		line, err := console.Prompt(pathResolver.CurrentPath() + ">")
