@@ -86,6 +86,10 @@ func Start() {
 			return
 		}
 
+		if len(line) == 0 {
+			continue
+		}
+
 		tokens := strings.Split(line, " ")
 		if len(tokens) == 0 {
 			continue
