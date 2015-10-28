@@ -7,7 +7,6 @@ import "github.com/kamilhark/etcdsh/etcdclient"
 import "github.com/kamilhark/etcdsh/common"
 
 type SetCommand struct {
-	OneArgumentAutoCompleteCommand
 	PathResolver *pathresolver.PathResolver
 	EtcdClient   etcdclient.EtcdClient
 }
@@ -35,4 +34,9 @@ func (c *SetCommand) Verify(args []string) error {
 func (c *SetCommand) CommandString() string {
 	return "set"
 }
+
+func (o *SetCommand) GetAutoCompleteConfig() AutoCompleteConfig {
+	return AutoCompleteConfig{Available:true, OnlyDirs:true}
+}
+
 

@@ -7,7 +7,6 @@ import "github.com/kamilhark/etcdsh/etcdclient"
 import "github.com/kamilhark/etcdsh/common"
 
 type RmCommand struct {
-	OneArgumentAutoCompleteCommand
 	PathResolver *pathresolver.PathResolver
 	EtcdClient   etcdclient.EtcdClient
 }
@@ -36,3 +35,8 @@ func (c *RmCommand) Verify(args []string) error {
 func (c *RmCommand) CommandString() string {
 	return "rm"
 }
+
+func (o *RmCommand) GetAutoCompleteConfig() AutoCompleteConfig {
+	return AutoCompleteConfig{Available:true, OnlyDirs:false}
+}
+

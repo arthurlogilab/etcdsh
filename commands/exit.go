@@ -7,7 +7,6 @@ import (
 )
 
 type ExitCommand struct {
-	NoAutoCompleteCommand
 	State *liner.State
 }
 
@@ -26,4 +25,8 @@ func (exitCommand *ExitCommand) Verify(args []string) error {
 
 func (exitCommand *ExitCommand) CommandString() string {
 	return "exit"
+}
+
+func (o *ExitCommand) GetAutoCompleteConfig() AutoCompleteConfig {
+	return AutoCompleteConfig{Available:false}
 }

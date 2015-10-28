@@ -45,13 +45,15 @@ func (c *Completer) completeArgument(line string, tokens []string) (result []str
 		return
 	}
 
+	autoCompleteConfig := commandHandler.GetAutoCompleteConfig()
+
 	response, _ := c.EtcdClient.Get(c.PathResolver.CurrentPath())
 	nodes := response.Node.Nodes
 
 	for _, node := range nodes {
 		lastIndexOfSlash := strings.LastIndex(node.Key, "/")
 		key := node.Key[lastIndexOfSlash + 1:]
-		if strings.HasPrefix(key, tokens[1]) && node.Dir {
+		if strings.HasPrefix(key, tokens[1]) && (node.Dir || !autoCompleteConfig.OnlyDirs) {
 			result = append(result, commandHandler.CommandString() + " " + key)
 		}
 	}

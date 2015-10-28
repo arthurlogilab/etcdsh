@@ -72,6 +72,19 @@ func TestShouldNotCompleteForExitCommand(t *testing.T) {
 	assertLength(t, hints, 0)
 }
 
+func TestShouldCompleteValueNodesWhenGetCommand(t *testing.T) {
+	rootNode := etcdclient.Node{}
+	rootNode.Nodes = []etcdclient.Node{createDirNode("/aa"), createValueNode("/ab")}
+
+	response := &etcdclient.Response{"", rootNode}
+	etcdClient.MockGet(pathResolver.CurrentPath(), response)
+
+	hints := completer("get a")
+
+	assertLength(t, hints, 2)
+	assertContainHint(t, hints, "get aa", "get ab")
+}
+
 func assertContainHint(t *testing.T, actualHints []string, expectedHints ...string) {
 	for _, hint := range expectedHints {
 		found := false

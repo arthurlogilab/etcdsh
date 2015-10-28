@@ -5,7 +5,6 @@ import "github.com/kamilhark/etcdsh/etcdclient"
 import "github.com/kamilhark/etcdsh/common"
 
 type CdCommand struct {
-	OneArgumentAutoCompleteCommand
 	PathResolver *pathresolver.PathResolver
 	EtcdClient   etcdclient.EtcdClient
 }
@@ -46,5 +45,9 @@ func (cdCommand *CdCommand) Verify(args []string) error {
 
 func (cdCommand *CdCommand) CommandString() string {
 	return "cd"
+}
+
+func (o *CdCommand) GetAutoCompleteConfig() AutoCompleteConfig {
+	return AutoCompleteConfig{Available:true, OnlyDirs:true}
 }
 
