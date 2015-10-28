@@ -32,9 +32,23 @@ func TestCompleteCommandsNames(t *testing.T) {
 	}
 }
 
-func TestCompleteFirstDirArgument(t *testing.T) {
+func TestCompleteFirstDirArgumentWhenInRootDir(t *testing.T) {
 	rootNode := etcdclient.Node{}
-	rootNode.Nodes = []etcdclient.Node{createDirNode("aa"), createDirNode("ab"), createDirNode("bb"), createValueNode("aaa")}
+	rootNode.Nodes = []etcdclient.Node{createDirNode("/aa"), createDirNode("/ab"), createDirNode("/bb"), createValueNode("aaa")}
+
+	response := &etcdclient.Response{"", rootNode}
+	etcdClient.MockGet(pathResolver.CurrentPath(), response)
+
+	hints := completer("cd a")
+
+	assertLength(t, hints, 2)
+	assertContainHint(t, hints, "cd aa", "cd ab")
+}
+
+func TestCompleteFirstDirArgumentWhenInChildDir(t *testing.T) {
+	pathResolver.Add("child")
+	rootNode := etcdclient.Node{}
+	rootNode.Nodes = []etcdclient.Node{createDirNode("/child/aa"), createDirNode("/child/ab")}
 
 	response := &etcdclient.Response{"", rootNode}
 	etcdClient.MockGet(pathResolver.CurrentPath(), response)

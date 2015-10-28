@@ -40,18 +40,30 @@ func (c *Completer) completeCommand(tokens []string) (result []string) {
 
 func (c *Completer) completeArgument(line string, tokens []string) (result []string) {
 
+	commandHandler := c.getCommandHandler(line)
+	if (commandHandler == nil) {
+		return
+	}
+
 	response, _ := c.EtcdClient.Get(c.PathResolver.CurrentPath())
 	nodes := response.Node.Nodes
 
-	for _, commandHandler := range c.CommandsArray {
-		if strings.HasPrefix(line, commandHandler.CommandString()) {
-			for _, node := range nodes {
-				if strings.HasPrefix(node.Key, tokens[1]) && node.Dir {
-					result = append(result, commandHandler.CommandString() + " " + node.Key)
-				}
-			}
+	for _, node := range nodes {
+		lastIndexOfSlash := strings.LastIndex(node.Key, "/")
+		key := node.Key[lastIndexOfSlash+1:]
+		if strings.HasPrefix(key, tokens[1]) && node.Dir {
+			result = append(result, commandHandler.CommandString() + " " + key)
 		}
 	}
 
 	return
+}
+
+func (c *Completer) getCommandHandler(line string) commands.Command {
+	for _, commandHandler := range c.CommandsArray {
+		if strings.HasPrefix(line, commandHandler.CommandString()) {
+			return commandHandler
+		}
+	}
+	return nil
 }
