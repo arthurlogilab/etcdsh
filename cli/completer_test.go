@@ -11,11 +11,12 @@ import (
 var etcdClient = etcdclient.NewEtcdClientMock()
 var pathResolver = &pathresolver.PathResolver{}
 var commandsArray = []commands.Command{
-	&commands.CdCommand{pathResolver, etcdClient},
-	&commands.LsCommand{pathResolver, etcdClient},
-	&commands.GetCommand{pathResolver, etcdClient},
-	&commands.SetCommand{pathResolver, etcdClient},
-	&commands.RmCommand{pathResolver, etcdClient},
+	&commands.CdCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
+	&commands.LsCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
+	&commands.GetCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
+	&commands.SetCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
+	&commands.RmCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
+	&commands.ExitCommand{},
 }
 var completer = (&Completer{etcdClient, commandsArray, pathResolver}).Get
 
@@ -57,6 +58,18 @@ func TestCompleteFirstDirArgumentWhenInChildDir(t *testing.T) {
 
 	assertLength(t, hints, 2)
 	assertContainHint(t, hints, "cd aa", "cd ab")
+}
+
+func TestShouldNotCompleteForExitCommand(t *testing.T) {
+	rootNode := etcdclient.Node{}
+	rootNode.Nodes = []etcdclient.Node{createDirNode("/aa"), createDirNode("/ab")}
+
+	response := &etcdclient.Response{"", rootNode}
+	etcdClient.MockGet(pathResolver.CurrentPath(), response)
+
+	hints := completer("exit ")
+
+	assertLength(t, hints, 0)
 }
 
 func assertContainHint(t *testing.T, actualHints []string, expectedHints ...string) {

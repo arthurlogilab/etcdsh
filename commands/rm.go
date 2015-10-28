@@ -7,6 +7,7 @@ import "github.com/kamilhark/etcdsh/etcdclient"
 import "github.com/kamilhark/etcdsh/common"
 
 type RmCommand struct {
+	OneArgumentAutoCompleteCommand
 	PathResolver *pathresolver.PathResolver
 	EtcdClient   etcdclient.EtcdClient
 }

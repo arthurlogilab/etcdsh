@@ -41,7 +41,7 @@ func (c *Completer) completeCommand(tokens []string) (result []string) {
 func (c *Completer) completeArgument(line string, tokens []string) (result []string) {
 
 	commandHandler := c.getCommandHandler(line)
-	if (commandHandler == nil) {
+	if (commandHandler == nil || !commandHandler.GetAutoCompleteConfig().Available) {
 		return
 	}
 
@@ -50,7 +50,7 @@ func (c *Completer) completeArgument(line string, tokens []string) (result []str
 
 	for _, node := range nodes {
 		lastIndexOfSlash := strings.LastIndex(node.Key, "/")
-		key := node.Key[lastIndexOfSlash+1:]
+		key := node.Key[lastIndexOfSlash + 1:]
 		if strings.HasPrefix(key, tokens[1]) && node.Dir {
 			result = append(result, commandHandler.CommandString() + " " + key)
 		}

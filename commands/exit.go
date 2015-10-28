@@ -7,6 +7,7 @@ import (
 )
 
 type ExitCommand struct {
+	NoAutoCompleteCommand
 	State *liner.State
 }
 

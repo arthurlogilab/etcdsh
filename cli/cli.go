@@ -29,12 +29,12 @@ func Start() {
 	console := liner.NewLiner()
 	console.SetTabCompletionStyle(liner.TabCircular)
 	commandsArray := []commands.Command{
-		&commands.ExitCommand{console},
-		&commands.CdCommand{pathResolver, etcdClient},
-		&commands.LsCommand{pathResolver, etcdClient},
-		&commands.GetCommand{pathResolver, etcdClient},
-		&commands.SetCommand{pathResolver, etcdClient},
-		&commands.RmCommand{pathResolver, etcdClient},
+		&commands.ExitCommand{State: console},
+		&commands.CdCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
+		&commands.LsCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
+		&commands.GetCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
+		&commands.SetCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
+		&commands.RmCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
 	}
 
 	defer console.Close()
