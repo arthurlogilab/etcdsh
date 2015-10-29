@@ -3,12 +3,15 @@ package commands
 import "strings"
 import "fmt"
 import "github.com/kamilhark/etcdsh/pathresolver"
-import "github.com/kamilhark/etcdsh/etcdclient"
-import "github.com/kamilhark/etcdsh/common"
+import (
+	"github.com/kamilhark/etcdsh/common"
+	"github.com/coreos/etcd/client"
+	"golang.org/x/net/context"
+)
 
 type SetCommand struct {
 	PathResolver *pathresolver.PathResolver
-	EtcdClient   etcdclient.EtcdClient
+	KeysApi      client.KeysAPI
 }
 
 func (c *SetCommand) Supports(command string) bool {
@@ -18,7 +21,7 @@ func (c *SetCommand) Supports(command string) bool {
 func (c *SetCommand) Handle(args []string) {
 	key := c.PathResolver.Resolve(args[0])
 	value := args[1]
-	err := c.EtcdClient.Set(key, value)
+	_, err := c.KeysApi.Set(context.Background(), key, value, &client.SetOptions{Dir:false})
 	if err != nil {
 		fmt.Println(err)
 	}

@@ -1,12 +1,15 @@
 package commands
 
 import "github.com/kamilhark/etcdsh/pathresolver"
-import "github.com/kamilhark/etcdsh/etcdclient"
-import "github.com/kamilhark/etcdsh/common"
+import (
+	"github.com/kamilhark/etcdsh/common"
+	"github.com/coreos/etcd/client"
+	"golang.org/x/net/context"
+)
 
 type CdCommand struct {
 	PathResolver *pathresolver.PathResolver
-	EtcdClient   etcdclient.EtcdClient
+	KeysApi      client.KeysAPI
 }
 
 func (cdCommand *CdCommand) Supports(command string) bool {
@@ -31,7 +34,7 @@ func (cdCommand *CdCommand) Verify(args []string) error {
 	}
 
 	nextPath := cdCommand.PathResolver.Resolve(args[0])
-	response, err := cdCommand.EtcdClient.Get(nextPath)
+	response, err := cdCommand.KeysApi.Get(context.Background(), nextPath, &client.GetOptions{})
 	if err != nil {
 		return err
 	}

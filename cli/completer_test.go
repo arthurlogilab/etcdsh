@@ -2,23 +2,24 @@ package cli
 
 import "testing"
 import (
-	"github.com/kamilhark/etcdsh/etcdclient"
+	"github.com/kamilhark/etcdsh/mocks"
 	"github.com/kamilhark/etcdsh/commands"
 	"github.com/kamilhark/etcdsh/pathresolver"
 	"strings"
+	"github.com/coreos/etcd/client"
 )
 
-var etcdClient = etcdclient.NewEtcdClientMock()
+var keysApiMock = mocks.NewKeysApiMock()
 var pathResolver = &pathresolver.PathResolver{}
 var commandsArray = []commands.Command{
-	&commands.CdCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
-	&commands.LsCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
-	&commands.GetCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
-	&commands.SetCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
-	&commands.RmCommand{PathResolver: pathResolver, EtcdClient: etcdClient},
+	&commands.CdCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
+	&commands.LsCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
+	&commands.GetCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
+	&commands.SetCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
+	&commands.RmCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
 	&commands.ExitCommand{},
 }
-var completer = (&Completer{etcdClient, commandsArray, pathResolver}).Get
+var completer = (&Completer{keysApiMock, commandsArray, pathResolver}).Get
 
 func TestCompleteCommandsNames(t *testing.T) {
 	assertContainHint(t, completer("c"), "cd")
@@ -34,11 +35,16 @@ func TestCompleteCommandsNames(t *testing.T) {
 }
 
 func TestCompleteFirstDirArgumentWhenInRootDir(t *testing.T) {
-	rootNode := etcdclient.Node{}
-	rootNode.Nodes = []etcdclient.Node{createDirNode("/aa"), createDirNode("/ab"), createDirNode("/bb"), createValueNode("aaa")}
 
-	response := &etcdclient.Response{"", rootNode}
-	etcdClient.MockGet(pathResolver.CurrentPath(), response)
+	node := createDirNode("/aa")
+	nodes := client.Nodes{node, createDirNode("/ab"), createDirNode("/bb"), createValueNode("aaa")}
+
+	rootNode := &client.Node{
+		Nodes: nodes,
+	}
+
+	response := &client.Response{"", rootNode, nil, 1}
+	keysApiMock.MockGet(pathResolver.CurrentPath(), response)
 
 	hints := completer("cd a")
 
@@ -48,11 +54,11 @@ func TestCompleteFirstDirArgumentWhenInRootDir(t *testing.T) {
 
 func TestCompleteFirstDirArgumentWhenInChildDir(t *testing.T) {
 	pathResolver.Add("child")
-	rootNode := etcdclient.Node{}
-	rootNode.Nodes = []etcdclient.Node{createDirNode("/child/aa"), createDirNode("/child/ab")}
+	rootNode := &client.Node{}
+	rootNode.Nodes = []*client.Node{createDirNode("/child/aa"), createDirNode("/child/ab")}
 
-	response := &etcdclient.Response{"", rootNode}
-	etcdClient.MockGet(pathResolver.CurrentPath(), response)
+	response := &client.Response{"", rootNode, nil, 1}
+	keysApiMock.MockGet(pathResolver.CurrentPath(), response)
 
 	hints := completer("cd a")
 
@@ -61,11 +67,11 @@ func TestCompleteFirstDirArgumentWhenInChildDir(t *testing.T) {
 }
 
 func TestShouldNotCompleteForExitCommand(t *testing.T) {
-	rootNode := etcdclient.Node{}
-	rootNode.Nodes = []etcdclient.Node{createDirNode("/aa"), createDirNode("/ab")}
+	rootNode := &client.Node{}
+	rootNode.Nodes = []*client.Node{createDirNode("/aa"), createDirNode("/ab")}
 
-	response := &etcdclient.Response{"", rootNode}
-	etcdClient.MockGet(pathResolver.CurrentPath(), response)
+	response := &client.Response{"", rootNode, nil, 1}
+	keysApiMock.MockGet(pathResolver.CurrentPath(), response)
 
 	hints := completer("exit ")
 
@@ -73,11 +79,12 @@ func TestShouldNotCompleteForExitCommand(t *testing.T) {
 }
 
 func TestShouldCompleteValueNodesWhenGetCommand(t *testing.T) {
-	rootNode := etcdclient.Node{}
-	rootNode.Nodes = []etcdclient.Node{createDirNode("/aa"), createValueNode("/ab")}
+	rootNode := &client.Node{
+		Nodes: client.Nodes{createDirNode("/aa"), createValueNode("/ab")},
+	}
 
-	response := &etcdclient.Response{"", rootNode}
-	etcdClient.MockGet(pathResolver.CurrentPath(), response)
+	response := &client.Response{"", rootNode, nil, 1}
+	keysApiMock.MockGet(pathResolver.CurrentPath(), response)
 
 	hints := completer("get a")
 
@@ -106,15 +113,11 @@ func assertLength(t *testing.T, slice []string, expectedLength int) {
 	}
 }
 
-func createDirNode(key string) (node etcdclient.Node) {
-	node.Dir = true
-	node.Key = key
-	return
+func createDirNode(key string) *client.Node {
+	return &client.Node{Dir:true, Key:key}
 }
 
-func createValueNode(key string) (node etcdclient.Node) {
-	node.Dir = false
-	node.Key = key
-	return
+func createValueNode(key string) *client.Node {
+	return &client.Node{Dir:false, Key:key}
 }
 

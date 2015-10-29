@@ -2,13 +2,14 @@ package cli
 
 import (
 	"strings"
-	"github.com/kamilhark/etcdsh/etcdclient"
 	"github.com/kamilhark/etcdsh/commands"
 	"github.com/kamilhark/etcdsh/pathresolver"
+	"github.com/coreos/etcd/client"
+	"golang.org/x/net/context"
 )
 
 type Completer struct {
-	EtcdClient    etcdclient.EtcdClient
+	KeysApi       client.KeysAPI
 	CommandsArray []commands.Command
 	PathResolver  *pathresolver.PathResolver
 }
@@ -47,7 +48,7 @@ func (c *Completer) completeArgument(line string, tokens []string) (result []str
 
 	autoCompleteConfig := commandHandler.GetAutoCompleteConfig()
 
-	response, _ := c.EtcdClient.Get(c.PathResolver.CurrentPath())
+	response, _ := c.KeysApi.Get(context.Background(), c.PathResolver.CurrentPath(), &client.GetOptions{})
 	nodes := response.Node.Nodes
 
 	for _, node := range nodes {

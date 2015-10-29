@@ -3,11 +3,14 @@ package commands
 import "fmt"
 import "github.com/kamilhark/etcdsh/common"
 import "github.com/kamilhark/etcdsh/pathresolver"
-import "github.com/kamilhark/etcdsh/etcdclient"
+import (
+	"github.com/coreos/etcd/client"
+	"golang.org/x/net/context"
+)
 
 type LsCommand struct {
 	PathResolver *pathresolver.PathResolver
-	EtcdClient   etcdclient.EtcdClient
+	KeysApi      client.KeysAPI
 }
 
 func (c *LsCommand) Supports(command string) bool {
@@ -20,7 +23,7 @@ func (c *LsCommand) Handle(args []string) {
 		lsArg = args[0]
 	}
 	lsPath := c.PathResolver.Resolve(lsArg)
-	resp, err := c.EtcdClient.Get(lsPath)
+	resp, err := c.KeysApi.Get(context.Background(), lsPath, &client.GetOptions{})
 
 	if err != nil {
 		fmt.Println(err)
