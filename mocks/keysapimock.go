@@ -2,7 +2,8 @@ package mocks
 
 import (
 	"github.com/coreos/etcd/client"
-	"github.com/coreos/etcd/Godeps/_workspace/src/golang.org/x/net/context"
+	//	"github.com/coreos/etcd/Godeps/_workspace/src/golang.org/x/net/context"
+	"golang.org/x/net/context"
 )
 
 type KeysApiMock struct {
@@ -10,7 +11,7 @@ type KeysApiMock struct {
 }
 
 func NewKeysApiMock() *KeysApiMock {
-	return &KeysApiMock{mockedGetMethodInvocations:make(map[string]*client.Response)}
+	return &KeysApiMock{mockedGetMethodInvocations: make(map[string]*client.Response)}
 }
 
 func (mock *KeysApiMock) Get(ctx context.Context, key string, opts *client.GetOptions) (*client.Response, error) {

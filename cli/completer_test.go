@@ -2,11 +2,12 @@ package cli
 
 import "testing"
 import (
-	"github.com/kamilhark/etcdsh/mocks"
-	"github.com/kamilhark/etcdsh/commands"
-	"github.com/kamilhark/etcdsh/pathresolver"
 	"strings"
+
 	"github.com/coreos/etcd/client"
+	"github.com/kamilhark/etcdsh/commands"
+	"github.com/kamilhark/etcdsh/mocks"
+	"github.com/kamilhark/etcdsh/pathresolver"
 )
 
 var keysApiMock = mocks.NewKeysApiMock()
@@ -17,6 +18,8 @@ var commandsArray = []commands.Command{
 	&commands.GetCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
 	&commands.SetCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
 	&commands.RmCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
+	&commands.RmDirCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
+	&commands.MkDirCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
 	&commands.ExitCommand{},
 }
 var completer = (&Completer{keysApiMock, commandsArray, pathResolver}).Get
@@ -114,10 +117,9 @@ func assertLength(t *testing.T, slice []string, expectedLength int) {
 }
 
 func createDirNode(key string) *client.Node {
-	return &client.Node{Dir:true, Key:key}
+	return &client.Node{Dir: true, Key: key}
 }
 
 func createValueNode(key string) *client.Node {
-	return &client.Node{Dir:false, Key:key}
+	return &client.Node{Dir: false, Key: key}
 }
-
