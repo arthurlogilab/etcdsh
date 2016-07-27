@@ -15,22 +15,28 @@ Although there is an official command line tool [etcdctl](https://github.com/cor
 
 ## Examples
 <pre>
-<code>./etcdsh [-url http://localhost:4001] [-urls http://etcd1:4001,http://etcd2:4001]</code>
+<code>./etcdsh [--url http://localhost:4001] [--urls http://etcd1:4001,http://etcd2:4001]</code>
 <code>connected to etcd</code>
-<code>/>cd foo/bar</code>
-<code>/foo/bar>set key value</code>
-<code>/foo/bar>get key</code>
+<code>/> cd foo/bar</code>
+<code>/foo/bar> set key value</code>
+<code>/foo/bar> get key</code>
 <code>value</code>
-<code>/foo/bar>rm key</code>
-<code>/foo/bar>ls</code>
+<code>dump /</code>
+<code>/foo/</code>
+<code>/foo/bar/</code>
+<code>/foo/bar/key#value</code>
+<code>/foo/bar/dir1/</code>
+<code>/foo/bar/dir2/</code>
+<code>/foo/bar> rm key</code>
+<code>/foo/bar> ls</code>
 <code>dir1</code>
 <code>dir2</code>
-<code>/foo/bar>mkdir xyz</code>
-<code>/foo/bar>ls</code>
+<code>/foo/bar> mkdir dir3</code>
+<code>/foo/bar> ls</code>
 <code>dir1</code>
 <code>dir2</code>
-<code>xyz</code>
-<code>/foo/bar>rmdir xyz</code>
-<code>/foo/bar>exit</code>
+<code>dir3</code>
+<code>/foo/bar> rmdir dir3</code>
+<code>/foo/bar> exit</code>
 </pre>
 

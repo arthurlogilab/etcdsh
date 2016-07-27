@@ -15,6 +15,7 @@ var pathResolver = &pathresolver.PathResolver{}
 var commandsArray = []commands.Command{
 	&commands.CdCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
 	&commands.LsCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
+	&commands.DumpCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
 	&commands.GetCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
 	&commands.SetCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
 	&commands.RmCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
@@ -26,6 +27,7 @@ var completer = (&Completer{keysApiMock, commandsArray, pathResolver}).Get
 
 func TestCompleteCommandsNames(t *testing.T) {
 	assertContainHint(t, completer("c"), "cd")
+	assertContainHint(t, completer("d"), "dump")
 	assertContainHint(t, completer("s"), "set")
 	assertContainHint(t, completer("r"), "rm")
 	assertContainHint(t, completer("l"), "ls")
