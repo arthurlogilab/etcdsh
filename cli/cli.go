@@ -13,17 +13,35 @@ import (
 	"time"
 )
 
-
 func Start() {
-	etcdUrl := getEtcdUrl()
+
+ 	var urls = flag.String("urls", "", "etcd urls")
+        var url = flag.String("url", "", "etcd url")
+
+	flag.Parse()	
+
+	etcdUrls := strings.Split(*urls, ",")
+	etcdUrl := *url
+
+	if etcdUrl != "" {
+		if *urls != "" {
+			log.Fatal("You must enter --url or --urls")
+		}else{
+			etcdUrls = []string{etcdUrl}
+		}		
+	}
+
+	if len(etcdUrls) == 1 && etcdUrls[0] == "" {
+		log.Fatal("You must enter at least one URL. Use --url or --urls")
+	}
+
 	pathResolver := new(pathresolver.PathResolver)
 	cfg := client.Config{
-		Endpoints:               []string{etcdUrl},
+		Endpoints:               etcdUrls,
 		Transport:               client.DefaultTransport,
 		// set timeout per request to fail fast when the target endpoint is unavailable
 		HeaderTimeoutPerRequest: time.Second,
 	}
-
 
 	c, err := client.New(cfg)
 	if err != nil {
@@ -42,6 +60,8 @@ func Start() {
 		&commands.GetCommand{PathResolver: pathResolver, KeysApi: api},
 		&commands.SetCommand{PathResolver: pathResolver, KeysApi: api},
 		&commands.RmCommand{PathResolver: pathResolver, KeysApi: api},
+		&commands.RmDirCommand{PathResolver: pathResolver, KeysApi: api},
+		&commands.MkDirCommand{PathResolver: pathResolver, KeysApi: api},
 	}
 
 	defer console.Close()
@@ -87,12 +107,6 @@ func Start() {
 		}
 		printPrompt(pathResolver)
 	}
-}
-
-func getEtcdUrl() string {
-	var url = flag.String("url", "http://localhost:4001", "etcd url")
-	flag.Parse()
-	return *url
 }
 
 func printPrompt(pathResolver *pathresolver.PathResolver) {
