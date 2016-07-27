@@ -21,7 +21,7 @@ Although there is an official command line tool [etcdctl](https://github.com/cor
 <code>/foo/bar> set key value</code>
 <code>/foo/bar> get key</code>
 <code>value</code>
-<code>dump /</code>
+<code>/foo/bar> dump /</code>
 <code>/foo/</code>
 <code>/foo/bar/</code>
 <code>/foo/bar/key#value</code>
