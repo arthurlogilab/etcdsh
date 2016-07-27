@@ -70,7 +70,7 @@ func Start() {
 	console.SetCompleter(completer)
 
 	for {
-		line, err := console.Prompt(pathResolver.CurrentPath() + ">")
+		line, err := console.Prompt(pathResolver.CurrentPath() + "> ")
 
 		if err != nil && err == liner.ErrPromptAborted {
 			return
