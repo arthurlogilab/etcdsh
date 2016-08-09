@@ -1,17 +1,14 @@
 package commands
 
 import "strings"
-import "fmt"
-import "github.com/kamilhark/etcdsh/pathresolver"
+
 import (
 	"github.com/kamilhark/etcdsh/common"
-	"github.com/coreos/etcd/client"
-	"golang.org/x/net/context"
+	"github.com/kamilhark/etcdsh/engine"
 )
 
 type MkDirCommand struct {
-	PathResolver *pathresolver.PathResolver
-	KeysApi      client.KeysAPI
+	Engine engine.Engine
 }
 
 func (c *MkDirCommand) Supports(command string) bool {
@@ -19,11 +16,7 @@ func (c *MkDirCommand) Supports(command string) bool {
 }
 
 func (c *MkDirCommand) Handle(args []string) {
-	key := c.PathResolver.Resolve(args[0])
-	_, err := c.KeysApi.Set(context.Background(), key, "", &client.SetOptions{Dir:true})
-	if err != nil {
-		fmt.Println(err)
-	}
+	c.Engine.MkDir(args[0])
 }
 
 func (c *MkDirCommand) Verify(args []string) error {
@@ -38,7 +31,5 @@ func (c *MkDirCommand) CommandString() string {
 }
 
 func (o *MkDirCommand) GetAutoCompleteConfig() AutoCompleteConfig {
-	return AutoCompleteConfig{Available:false}
+	return AutoCompleteConfig{Available: false}
 }
-
-

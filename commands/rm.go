@@ -1,17 +1,14 @@
 package commands
 
 import "strings"
-import "fmt"
-import "github.com/kamilhark/etcdsh/pathresolver"
+
 import (
 	"github.com/kamilhark/etcdsh/common"
-	"github.com/coreos/etcd/client"
-	"golang.org/x/net/context"
+	"github.com/kamilhark/etcdsh/engine"
 )
 
 type RmCommand struct {
-	PathResolver *pathresolver.PathResolver
-	KeysApi      client.KeysAPI
+	Engine engine.Engine
 }
 
 func (c *RmCommand) Supports(command string) bool {
@@ -20,11 +17,7 @@ func (c *RmCommand) Supports(command string) bool {
 
 func (c *RmCommand) Handle(args []string) {
 	for i := 0; i < len(args); i++ {
-		key := c.PathResolver.Resolve(args[i])
-		_, err := c.KeysApi.Delete(context.Background(), key, &client.DeleteOptions{})
-		if err != nil {
-			fmt.Println(err)
-		}
+		c.Engine.Rm(args[i], false)
 	}
 }
 
@@ -40,6 +33,5 @@ func (c *RmCommand) CommandString() string {
 }
 
 func (o *RmCommand) GetAutoCompleteConfig() AutoCompleteConfig {
-	return AutoCompleteConfig{Available:true, OnlyDirs:false}
+	return AutoCompleteConfig{Available: true, OnlyDirs: false}
 }
-

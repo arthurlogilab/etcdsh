@@ -1,17 +1,18 @@
 package cli
 
-import "flag"
-import "fmt"
-import "strings"
-import "log"
-import "github.com/kamilhark/etcdsh/commands"
-import "github.com/kamilhark/etcdsh/pathresolver"
-
 import (
+	"flag"
+	"fmt"
+	"log"
+	"strings"
 	"time"
 
 	"github.com/coreos/etcd/client"
 	"github.com/peterh/liner"
+
+	"github.com/kamilhark/etcdsh/commands"
+	"github.com/kamilhark/etcdsh/engine"
+	"github.com/kamilhark/etcdsh/pathresolver"
 )
 
 func Start() {
@@ -54,16 +55,21 @@ func Start() {
 
 	console := liner.NewLiner()
 	console.SetTabCompletionStyle(liner.TabCircular)
+
+	engine := engine.Engine{PathResolver: pathResolver, KeysApi: api}
+
 	commandsArray := []commands.Command{
 		&commands.ExitCommand{State: console},
-		&commands.CdCommand{PathResolver: pathResolver, KeysApi: api},
-		&commands.LsCommand{PathResolver: pathResolver, KeysApi: api},
-		&commands.DumpCommand{PathResolver: pathResolver, KeysApi: api},
-		&commands.GetCommand{PathResolver: pathResolver, KeysApi: api},
-		&commands.SetCommand{PathResolver: pathResolver, KeysApi: api},
-		&commands.RmCommand{PathResolver: pathResolver, KeysApi: api},
-		&commands.RmDirCommand{PathResolver: pathResolver, KeysApi: api},
-		&commands.MkDirCommand{PathResolver: pathResolver, KeysApi: api},
+		&commands.CdCommand{Engine: engine},
+		&commands.CpCommand{Engine: engine},
+		&commands.LsCommand{Engine: engine},
+		&commands.MvCommand{Engine: engine},
+		&commands.DumpCommand{Engine: engine},
+		&commands.GetCommand{Engine: engine},
+		&commands.SetCommand{Engine: engine},
+		&commands.RmCommand{Engine: engine},
+		&commands.RmDirCommand{Engine: engine},
+		&commands.MkDirCommand{Engine: engine},
 	}
 
 	defer console.Close()

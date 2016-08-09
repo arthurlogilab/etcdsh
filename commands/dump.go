@@ -1,38 +1,31 @@
 package commands
 
-import "fmt"
-import "github.com/kamilhark/etcdsh/common"
-import "github.com/kamilhark/etcdsh/pathresolver"
 import (
+	"fmt"
+	"strings"
+
 	"github.com/coreos/etcd/client"
-	"golang.org/x/net/context"
+	"github.com/kamilhark/etcdsh/common"
+	"github.com/kamilhark/etcdsh/engine"
 )
 
 type DumpCommand struct {
-	PathResolver *pathresolver.PathResolver
-	KeysApi      client.KeysAPI
+	Engine engine.Engine
 }
 
 func (c *DumpCommand) Supports(command string) bool {
-	return command == "dump"
+	return strings.EqualFold(command, "dump")
 }
 
 func (c *DumpCommand) Handle(args []string) {
-	var lsArg = ""
+	var dumpArg = ""
 	if len(args) == 1 {
-		lsArg = args[0]
+		dumpArg = args[0]
 	}
-	lsPath := c.PathResolver.Resolve(lsArg)
-	resp, err := c.KeysApi.Get(context.Background(), lsPath, &client.GetOptions{
-		Recursive: true,
-	})
-
-	if err != nil {
-		fmt.Println(err)
-		return
+	node := c.Engine.Get(dumpArg, true)
+	if node != nil {
+		recurseDump(node)
 	}
-
-	recurseDump(resp.Node)
 }
 
 func recurseDump(n *client.Node) {

@@ -1,17 +1,15 @@
 package commands
 
-import "strings"
-import "fmt"
-import "github.com/kamilhark/etcdsh/pathresolver"
 import (
+	"fmt"
+	"strings"
+
 	"github.com/kamilhark/etcdsh/common"
-	"github.com/coreos/etcd/client"
-	"golang.org/x/net/context"
+	"github.com/kamilhark/etcdsh/engine"
 )
 
 type GetCommand struct {
-	PathResolver *pathresolver.PathResolver
-	KeysApi      client.KeysAPI
+	Engine engine.Engine
 }
 
 func (c *GetCommand) Supports(command string) bool {
@@ -19,16 +17,11 @@ func (c *GetCommand) Supports(command string) bool {
 }
 
 func (c *GetCommand) Handle(args []string) {
-	key := c.PathResolver.Resolve(args[0])
-	response, err := c.KeysApi.Get(context.Background(), key, &client.GetOptions{})
-	if err != nil {
-		fmt.Println(err)
+	node := c.Engine.Get(args[0], false)
+	if node.Dir {
+		fmt.Println("dir provided, no value")
 	} else {
-		if response.Node.Dir {
-			fmt.Println("dir provided, no value")
-		} else {
-			fmt.Println(response.Node.Value)
-		}
+		fmt.Println(node.Value)
 	}
 }
 
@@ -44,7 +37,5 @@ func (c *GetCommand) CommandString() string {
 }
 
 func (o *GetCommand) GetAutoCompleteConfig() AutoCompleteConfig {
-	return AutoCompleteConfig{Available:true, OnlyDirs:false}
+	return AutoCompleteConfig{Available: true, OnlyDirs: false}
 }
-
-

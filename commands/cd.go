@@ -1,30 +1,29 @@
 package commands
 
-import "github.com/kamilhark/etcdsh/pathresolver"
 import (
+	"strings"
+
 	"github.com/kamilhark/etcdsh/common"
-	"github.com/coreos/etcd/client"
-	"golang.org/x/net/context"
+	"github.com/kamilhark/etcdsh/engine"
 )
 
 type CdCommand struct {
-	PathResolver *pathresolver.PathResolver
-	KeysApi      client.KeysAPI
+	Engine engine.Engine
 }
 
-func (cdCommand *CdCommand) Supports(command string) bool {
-	return command == "cd"
+func (c *CdCommand) Supports(command string) bool {
+	return strings.EqualFold(command, "cd")
 }
 
-func (cdCommand *CdCommand) Handle(args []string) {
+func (c *CdCommand) Handle(args []string) {
 	if len(args) == 1 {
-		cdCommand.PathResolver.GoTo(args[0])
+		c.Engine.PathResolver.GoTo(args[0])
 	} else {
-		cdCommand.PathResolver.GoTo("")
+		c.Engine.PathResolver.GoTo("")
 	}
 }
 
-func (cdCommand *CdCommand) Verify(args []string) error {
+func (c *CdCommand) Verify(args []string) error {
 	if len(args) > 1 {
 		return common.NewStringError("'cd' command supports only one argument")
 	}
@@ -33,24 +32,19 @@ func (cdCommand *CdCommand) Verify(args []string) error {
 		return nil
 	}
 
-	nextPath := cdCommand.PathResolver.Resolve(args[0])
-	response, err := cdCommand.KeysApi.Get(context.Background(), nextPath, &client.GetOptions{})
-	if err != nil {
-		return err
-	}
+	node := c.Engine.Get(args[0], false)
 
-	if !response.Node.Dir {
+	if node != nil && !node.Dir {
 		return common.NewStringError("not a directory")
 	}
 
 	return nil
 }
 
-func (cdCommand *CdCommand) CommandString() string {
+func (c *CdCommand) CommandString() string {
 	return "cd"
 }
 
 func (o *CdCommand) GetAutoCompleteConfig() AutoCompleteConfig {
-	return AutoCompleteConfig{Available:true, OnlyDirs:true}
+	return AutoCompleteConfig{Available: true, OnlyDirs: true}
 }
-

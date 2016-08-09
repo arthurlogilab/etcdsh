@@ -2,8 +2,8 @@ package commands
 
 import "os"
 import (
-	"strings"
 	"github.com/peterh/liner"
+	"strings"
 )
 
 type ExitCommand struct {
@@ -28,5 +28,5 @@ func (exitCommand *ExitCommand) CommandString() string {
 }
 
 func (o *ExitCommand) GetAutoCompleteConfig() AutoCompleteConfig {
-	return AutoCompleteConfig{Available:false}
+	return AutoCompleteConfig{Available: false}
 }
