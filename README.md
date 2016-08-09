@@ -37,6 +37,17 @@ Although there is an official command line tool [etcdctl](https://github.com/cor
 <code>dir2</code>
 <code>dir3</code>
 <code>/foo/bar> rmdir dir3</code>
+<code>/foo/bar> cd ..</code>
+<code>/foo> ls</code>
+<code>bar</code>
+<code>/foo> cp bar xyz</code>
+<code>/foo> ls</code>
+<code>bar</code>
+<code>xyz</code>
+<code>/foo> mv xyz aaa</code>
+<code>/foo> ls</code>
+<code>bar</code>
+<code>aaa</code>
 <code>/foo/bar> exit</code>
 </pre>
 
