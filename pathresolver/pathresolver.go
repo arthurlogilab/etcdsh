@@ -7,6 +7,11 @@ type PathResolver struct {
 }
 
 func (p *PathResolver) Resolve(subPath string) string {
+
+	if len(subPath) > 0 && subPath[0] == '/' {
+		return subPath
+	}
+
 	elements := strings.Split(subPath, "/")
 
 	currentPath := new(PathResolver)
@@ -43,7 +48,7 @@ func (p *PathResolver) Clear() {
 
 func (p *PathResolver) RemoveLast() {
 	if len(p.path) > 0 {
-		p.path = p.path[:len(p.path) - 1]
+		p.path = p.path[:len(p.path)-1]
 	}
 }
 
@@ -59,7 +64,7 @@ func normalize(path string) string {
 		path = "/" + path
 	}
 	if strings.HasSuffix(path, "/") {
-		path = path[:len(path) - 1]
+		path = path[:len(path)-1]
 	}
 	return path
 }

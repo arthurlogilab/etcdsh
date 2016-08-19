@@ -2,27 +2,36 @@ package cli
 
 import "testing"
 import (
-	"github.com/kamilhark/etcdsh/mocks"
-	"github.com/kamilhark/etcdsh/commands"
-	"github.com/kamilhark/etcdsh/pathresolver"
 	"strings"
+
 	"github.com/coreos/etcd/client"
+	"github.com/kamilhark/etcdsh/commands"
+	"github.com/kamilhark/etcdsh/engine"
+	"github.com/kamilhark/etcdsh/mocks"
+	"github.com/kamilhark/etcdsh/pathresolver"
 )
 
 var keysApiMock = mocks.NewKeysApiMock()
 var pathResolver = &pathresolver.PathResolver{}
+var Engine = engine.Engine{PathResolver: pathResolver, KeysApi: keysApiMock}
+
 var commandsArray = []commands.Command{
-	&commands.CdCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
-	&commands.LsCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
-	&commands.GetCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
-	&commands.SetCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
-	&commands.RmCommand{PathResolver: pathResolver, KeysApi: keysApiMock},
+	&commands.CdCommand{Engine: Engine},
+	&commands.LsCommand{Engine: Engine},
+	&commands.DumpCommand{Engine: Engine},
+	&commands.GetCommand{Engine: Engine},
+	&commands.SetCommand{Engine: Engine},
+	&commands.RmCommand{Engine: Engine},
+	&commands.RmDirCommand{Engine: Engine},
+	&commands.MkDirCommand{Engine: Engine},
 	&commands.ExitCommand{},
 }
 var completer = (&Completer{keysApiMock, commandsArray, pathResolver}).Get
 
 func TestCompleteCommandsNames(t *testing.T) {
 	assertContainHint(t, completer("c"), "cd")
+	assertContainHint(t, completer("m"), "mkdir")
+	assertContainHint(t, completer("d"), "dump")
 	assertContainHint(t, completer("s"), "set")
 	assertContainHint(t, completer("r"), "rm")
 	assertContainHint(t, completer("l"), "ls")
@@ -114,10 +123,9 @@ func assertLength(t *testing.T, slice []string, expectedLength int) {
 }
 
 func createDirNode(key string) *client.Node {
-	return &client.Node{Dir:true, Key:key}
+	return &client.Node{Dir: true, Key: key}
 }
 
 func createValueNode(key string) *client.Node {
-	return &client.Node{Dir:false, Key:key}
+	return &client.Node{Dir: false, Key: key}
 }
-

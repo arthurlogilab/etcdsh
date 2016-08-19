@@ -1,11 +1,11 @@
 package cli
 
 import (
-	"strings"
+	"github.com/coreos/etcd/client"
 	"github.com/kamilhark/etcdsh/commands"
 	"github.com/kamilhark/etcdsh/pathresolver"
-	"github.com/coreos/etcd/client"
 	"golang.org/x/net/context"
+	"strings"
 )
 
 type Completer struct {
@@ -29,7 +29,6 @@ func (c *Completer) Get(line string) []string {
 	return []string{}
 }
 
-
 func (c *Completer) completeCommand(tokens []string) (result []string) {
 	for _, commandHandler := range c.CommandsArray {
 		if strings.HasPrefix(commandHandler.CommandString(), tokens[0]) {
@@ -42,7 +41,7 @@ func (c *Completer) completeCommand(tokens []string) (result []string) {
 func (c *Completer) completeArgument(line string, tokens []string) (result []string) {
 
 	commandHandler := c.getCommandHandler(line)
-	if (commandHandler == nil || !commandHandler.GetAutoCompleteConfig().Available) {
+	if commandHandler == nil || !commandHandler.GetAutoCompleteConfig().Available {
 		return
 	}
 
@@ -53,9 +52,9 @@ func (c *Completer) completeArgument(line string, tokens []string) (result []str
 
 	for _, node := range nodes {
 		lastIndexOfSlash := strings.LastIndex(node.Key, "/")
-		key := node.Key[lastIndexOfSlash + 1:]
+		key := node.Key[lastIndexOfSlash+1:]
 		if strings.HasPrefix(key, tokens[1]) && (node.Dir || !autoCompleteConfig.OnlyDirs) {
-			result = append(result, commandHandler.CommandString() + " " + key)
+			result = append(result, commandHandler.CommandString()+" "+key)
 		}
 	}
 

@@ -1,29 +1,49 @@
 package cli
 
-import "flag"
-import "fmt"
-import "strings"
-import "log"
-import "github.com/kamilhark/etcdsh/commands"
-import "github.com/kamilhark/etcdsh/pathresolver"
-
 import (
-	"github.com/peterh/liner"
-	"github.com/coreos/etcd/client"
+	"flag"
+	"fmt"
+	"log"
+	"strings"
 	"time"
+
+	"github.com/coreos/etcd/client"
+	"github.com/peterh/liner"
+
+	"github.com/kamilhark/etcdsh/commands"
+	"github.com/kamilhark/etcdsh/engine"
+	"github.com/kamilhark/etcdsh/pathresolver"
 )
 
-
 func Start() {
-	etcdUrl := getEtcdUrl()
+
+	var urls = flag.String("urls", "", "etcd urls")
+	var url = flag.String("url", "", "etcd url")
+
+	flag.Parse()
+
+	etcdUrls := strings.Split(*urls, ",")
+	etcdUrl := *url
+
+	if etcdUrl != "" {
+		if *urls != "" {
+			log.Fatal("You must enter --url or --urls")
+		} else {
+			etcdUrls = []string{etcdUrl}
+		}
+	}
+
+	if len(etcdUrls) == 1 && etcdUrls[0] == "" {
+		log.Fatal("You must enter at least one URL. Use --url or --urls")
+	}
+
 	pathResolver := new(pathresolver.PathResolver)
 	cfg := client.Config{
-		Endpoints:               []string{etcdUrl},
-		Transport:               client.DefaultTransport,
+		Endpoints: etcdUrls,
+		Transport: client.DefaultTransport,
 		// set timeout per request to fail fast when the target endpoint is unavailable
 		HeaderTimeoutPerRequest: time.Second,
 	}
-
 
 	c, err := client.New(cfg)
 	if err != nil {
@@ -35,13 +55,21 @@ func Start() {
 
 	console := liner.NewLiner()
 	console.SetTabCompletionStyle(liner.TabCircular)
+
+	engine := engine.Engine{PathResolver: pathResolver, KeysApi: api}
+
 	commandsArray := []commands.Command{
 		&commands.ExitCommand{State: console},
-		&commands.CdCommand{PathResolver: pathResolver, KeysApi: api},
-		&commands.LsCommand{PathResolver: pathResolver, KeysApi: api},
-		&commands.GetCommand{PathResolver: pathResolver, KeysApi: api},
-		&commands.SetCommand{PathResolver: pathResolver, KeysApi: api},
-		&commands.RmCommand{PathResolver: pathResolver, KeysApi: api},
+		&commands.CdCommand{Engine: engine},
+		&commands.CpCommand{Engine: engine},
+		&commands.LsCommand{Engine: engine},
+		&commands.MvCommand{Engine: engine},
+		&commands.DumpCommand{Engine: engine},
+		&commands.GetCommand{Engine: engine},
+		&commands.SetCommand{Engine: engine},
+		&commands.RmCommand{Engine: engine},
+		&commands.RmDirCommand{Engine: engine},
+		&commands.MkDirCommand{Engine: engine},
 	}
 
 	defer console.Close()
@@ -50,7 +78,7 @@ func Start() {
 	console.SetCompleter(completer)
 
 	for {
-		line, err := console.Prompt(pathResolver.CurrentPath() + ">")
+		line, err := console.Prompt(pathResolver.CurrentPath() + "> ")
 
 		if err != nil && err == liner.ErrPromptAborted {
 			return
@@ -87,12 +115,6 @@ func Start() {
 		}
 		printPrompt(pathResolver)
 	}
-}
-
-func getEtcdUrl() string {
-	var url = flag.String("url", "http://localhost:4001", "etcd url")
-	flag.Parse()
-	return *url
 }
 
 func printPrompt(pathResolver *pathresolver.PathResolver) {
