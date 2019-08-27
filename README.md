@@ -10,8 +10,8 @@ Although there is an official command line tool [etcdctl](https://github.com/cor
 `go get github.com/kamilhark/etcdsh`
 
 ## Downloads binaries
- * [mac](https://github.com/kamilhark/etcdsh/releases/download/0.0.1-ALPHA/etcdsh-mac.zip) 
- * [linux](https://github.com/kamilhark/etcdsh/releases/download/0.0.2-ALPHA/etcdsh_mac.tar.gz)
+ * [mac](https://github.com/kamilhark/etcdsh/releases/download/0.0.2-ALPHA/etcdsh_mac.tar.gz) 
+ * [linux](https://github.com/kamilhark/etcdsh/releases/download/0.0.2-ALPHA/etcdsh_linux.tar.gz)
 
 ## Examples
 <pre>
